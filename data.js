@@ -1,0 +1,147 @@
+import {modelSchool} from './admissions.js?v=7.2';
+export const SUBJECTS = [
+ {id:'math',name:'数学',short:'数',color:'#d29846'},
+ {id:'english',name:'英語',short:'英',color:'#7197b8'},
+ {id:'physics',name:'物理',short:'物',color:'#609e94'},
+ {id:'chemistry',name:'化学',short:'化',color:'#bd807a'},
+ {id:'japanese',name:'国語',short:'国',color:'#9183a6'},
+ {id:'social',name:'地歴公民',short:'社',color:'#8eaa6d'},
+ {id:'info',name:'情報Ⅰ',short:'情',color:'#859baf'}
+];
+export const METHODS = {
+ foundation:{name:'基礎の穴を埋める',short:'基礎',description:'定義・公式・基本例題を説明できるようにする。'},
+ practice:{name:'標準問題を解き切る',short:'標準',description:'典型問題を自分で組み立て、時間内に解く。'},
+ advanced:{name:'記述・発展に挑む',short:'発展',description:'未知の設定に挑む。基礎を使いこなす力が要る。'}
+};
+export const ACTIVITIES = [
+ {id:'exercise',name:'運動する',short:'動',color:'#37947e',group:'life',description:'早歩き・ジョギング・筋トレなど。暮らしのページで選ぶ。'},
+ {id:'hobby',name:'好きなことをする',short:'趣',color:'#c27d37',group:'life',description:'写真・料理・音楽・サークルなど。'},
+ {id:'checkup',name:'健診・定期受診',short:'健',color:'#427996',group:'life',description:'体のことを相談する。2,000円。'},
+ ...SUBJECTS.map(s=>({...s,group:'study',description:'3時間の集中学習。選んだ教材レベルで伸び方が変わる。'})),
+ {id:'review',name:'復習・解き直し',short:'復',color:'#4f8b78',group:'support',description:'忘却を防ぎ、解法を定着。毎週1〜2コマが目安。'},
+ {id:'past',name:'形式別演習・過去問',short:'過',color:'#bb8d42',group:'support',description:'選んだ形式を練習。出願後は大学別対策も伸びる。初見・分析・解き直しを学習室で選べる。'},
+ {id:'writing',name:'記述答案の添削',short:'記',color:'#9b8063',group:'support',description:'記述力を養う。東大・京大では特に大切。1コマ1,500円。'},
+ {id:'interview',name:'面接・志望理由',short:'面',color:'#8b809e',group:'life',description:'再受験の理由と医師像を整理。未対策では筆記を突破しても厳しい。'},
+ {id:'campus',name:'理学部の課題',short:'大',color:'#647b8c',group:'life',description:'レポート・実験の遅れを取り戻す。履修と課題の配分によって必要時間が変わる。大学の勉強は受験にも加算。'},
+ {id:'rest',name:'休養・気分転換',short:'休',color:'#80a477',group:'life',description:'体調と気持ちを整える。勉強の効率と当日の実力発揮につながる。'},
+ {id:'mock',name:'模試を受ける',short:'模',color:'#5c72a8',group:'life',description:'指定週に1コマ。7科目の得点と前回からの変化を記録。復習残り −2。'},
+ {id:'outing',name:'お出かけ',short:'旅',color:'#72a6b8',group:'life',description:'47都道府県から行き先を選ぶ。移動込みで2〜4コマ。'},
+ {id:'talk',name:'ライブトーク',short:'声',color:'#a594c0',group:'life',description:'声に出して話す。ストレスと余白を回復。週2コマまで。'},
+ {id:'meetup',name:'オプチャのオフ会',short:'会',color:'#d59b87',group:'life',description:'参加者と会場を選ぶ。2コマ。相性の悪いメンツだとストレス増。'},
+ {id:'work',name:'バイト',short:'働',color:'#a88768',group:'life',description:'仕事を選んで週0〜12時間。収入・疲労・採用条件が異なる。'}
+];
+// Every numeric difficulty, gate, modeled subject weight and cost below is a game-design parameter.
+// Institutional names and classifications are cross-checked against JACME (2026-06-01).
+// Fields: id, institution, prefecture, type, challenge, profile, modeled common-test share, modeled CT gate, memo.
+const rows = [
+ ['hokkaido','北海道大学','北海道','国立',84,'balanced',.35,79,'理系4科目を高い水準でそろえる。共通テストの取りこぼしにも注意。'],
+ ['asahikawa','旭川医科大学','北海道','国立',77,'common',.55,75,'共通テストを土台に、苦手科目を残さず詰めるルート。'],
+ ['sapporo','札幌医科大学','北海道','公立',78,'balanced',.45,76,'標準問題の完答と面接の準備を両立したい。'],
+ ['hirosaki','弘前大学','青森県','国立',77,'common',.55,75,'共通テスト型の総合力と、粘り強い答案づくりで勝負。'],
+ ['iwate','岩手医科大学','岩手県','私立',76,'speed',0,0,'英数理の基礎を速く正確に。併願時は過去問の分散に注意。'],
+ ['tohoku','東北大学','宮城県','国立',85,'science',.30,79,'数学・理科を強みにして、難しい問題でも部分点を積み上げる。'],
+ ['tohoku-mpu','東北医科薬科大学','宮城県','私立',79,'balanced',0,0,'英数理の総合力で挑む一般枠モデル。修学資金枠は別の条件がある。'],
+ ['akita','秋田大学','秋田県','国立',77,'common',.55,76,'共通テストの弱点補強と面接対策が効く。'],
+ ['yamagata','山形大学','山形県','国立',78,'balanced',.45,77,'得意科目への偏りを減らして、総合点を伸ばす。'],
+ ['fukushima','福島県立医科大学','福島県','公立',78,'balanced',.45,75,'共通テストと理系科目を並行して仕上げる。'],
+ ['tsukuba','筑波大学','茨城県','国立',82,'balanced',.40,80,'バランス型の難関。英数理を均等に伸ばす対策が合う。'],
+ ['gunma','群馬大学','群馬県','国立',79,'english',.50,77,'英語と総合的な読解を軸に、共通テストを固める。'],
+ ['jichi','自治医科大学','栃木県','私立',82,'balanced',0,0,'出身都道府県等での選抜と卒後勤務を伴う。地域医療への意思を整理。'],
+ ['dokkyo','獨協医科大学','栃木県','私立',76,'speed',0,0,'理系4科目を標準レベルから確実に仕上げる。'],
+ ['saitama','埼玉医科大学','埼玉県','私立',75,'speed',0,0,'基礎の取りこぼしと時間不足を減らすことが近道。'],
+ ['defense','防衛医科大学校','埼玉県','大学校',83,'science',0,0,'入校年4月1日時点で18歳以上21歳未満。今回の3浪設定では出願不可。'],
+ ['chiba','千葉大学','千葉県','国立',85,'science',.35,81,'数学・理科の高い完成度を求める難関ルート。'],
+ ['iuhw','国際医療福祉大学','千葉県','私立',82,'english',0,0,'英語の強みを活かす。英語だけに偏ると理数で失点。'],
+ ['utokyo','東京大学 理科三類','東京都','国立',96,'elite',.20,89,'最難関チャレンジ。英数理・国語・記述・大学別対策をすべて仕上げる。'],
+ ['science-tokyo','東京科学大学','東京都','国立',89,'science',.30,85,'精度の高い数学・理科と英語読解が必要。旧東京医科歯科大学。'],
+ ['keio','慶應義塾大学','東京都','私立',91,'elite',0,0,'私立最難関。理数の記述と英語を高い水準で両立。'],
+ ['jikei','東京慈恵会医科大学','東京都','私立',87,'science',0,0,'理数の理解と英語の読解力を厳しく問う設定。'],
+ ['juntendo','順天堂大学','東京都','私立',86,'english',0,0,'英語を武器に、数学・理科の精度を詰める。'],
+ ['nms','日本医科大学','東京都','私立',86,'science',0,0,'数学・理科で差を作る難関。記述対策を早めに。'],
+ ['showa','昭和医科大学','東京都','私立',82,'speed',0,0,'時間内に得点を積み上げる。旧昭和大学、2025年に名称変更。'],
+ ['tokyo-med','東京医科大学','東京都','私立',82,'balanced',0,0,'英数理を偏りなく育て、大学別の出題に慣れる。'],
+ ['twmu','東京女子医科大学','東京都','私立',74,'balanced',0,0,'女子に限る募集。ゲームの出願資格設定を確認。'],
+ ['toho','東邦大学','東京都','私立',80,'speed',0,0,'標準問題の処理力を高め、失点を抑える。'],
+ ['nihon','日本大学','東京都','私立',79,'balanced',0,0,'英数理の総合力を上げ、過去問で時間配分を調整。'],
+ ['teikyo','帝京大学','東京都','私立',78,'choice',0,0,'このゲームでは英語必須＋数学・理科から上位2科目の3科目型。'],
+ ['kyorin','杏林大学','東京都','私立',79,'speed',0,0,'基礎知識を素早く取り出す練習が有効。'],
+ ['yokohama','横浜市立大学','神奈川県','公立',84,'balanced',.40,81,'共通テストから二次まで、穴の少ない学力で挑む。'],
+ ['kitasato','北里大学','神奈川県','私立',77,'balanced',0,0,'標準レベルの問題を解き切る力を鍛える。'],
+ ['tokai','東海大学','神奈川県','私立',78,'one-science',0,0,'ゲームでは英数＋得意な理科1科目。片方の理科を武器にできる。'],
+ ['marianna','聖マリアンナ医科大学','神奈川県','私立',76,'speed',0,0,'基礎を固めた後の速度と精度が大切。'],
+ ['niigata','新潟大学','新潟県','国立',81,'balanced',.45,79,'共通テストの完成度を高め、理系科目で上積みする。'],
+ ['toyama','富山大学','富山県','国立',78,'common',.55,75,'共通テスト重視のゲーム設定。幅広い科目を早めに準備。'],
+ ['kanazawa','金沢大学','石川県','国立',81,'science',.40,78,'理系科目の強さを共通テストの安定感で支える。'],
+ ['kanazawa-med','金沢医科大学','石川県','私立',76,'speed',0,0,'時間制約のある演習で、標準問題の失点を減らす。'],
+ ['fukui','福井大学','福井県','国立',78,'common',.50,75,'共通テスト型の幅広さと、理数の解答精度を両立。'],
+ ['yamanashi','山梨大学','山梨県','国立',84,'science',.35,81,'国公立後期のルート。前期との併願時は理数の仕上がりが鍵。'],
+ ['shinshu','信州大学','長野県','国立',80,'balanced',.45,79,'基礎を広く固めてから、二次向けの演習へ。'],
+ ['gifu','岐阜大学','岐阜県','国立',81,'science',.40,78,'理数の演習を軸に、国語・地歴公民・情報も保つ。'],
+ ['hamamatsu','浜松医科大学','静岡県','国立',81,'balanced',.45,78,'共通テストと英数理の両立型。'],
+ ['nagoya','名古屋大学','愛知県','国立',86,'science',.30,81,'高い理数の理解と記述力をそろえる。'],
+ ['nagoya-city','名古屋市立大学','愛知県','公立',82,'balanced',.40,79,'英数理の完成度を上げつつ、共通テストを安定させる。'],
+ ['aichi','愛知医科大学','愛知県','私立',79,'speed',0,0,'標準問題の取りこぼしを減らす実戦型。'],
+ ['fujita','藤田医科大学','愛知県','私立',80,'science',0,0,'理数で上積みしながら、英語の弱点を補う。'],
+ ['mie','三重大学','三重県','国立',80,'balanced',.45,78,'各科目を均等に育てて合計点で勝負。'],
+ ['shiga','滋賀医科大学','滋賀県','国立',81,'balanced',.40,78,'復習と演習を積み、英数理の穴をなくす。'],
+ ['kyoto','京都大学','京都府','国立',92,'elite',.25,86,'数学・理科の深い理解と国語の記述も必要な最難関。'],
+ ['kyoto-pref','京都府立医科大学','京都府','公立',84,'science',.35,79,'理数の完成度と時間内に答案をまとめる力で挑む。'],
+ ['osaka','大阪大学','大阪府','国立',89,'science',.30,84,'英数理の高い到達度が必要。得意だけを伸ばしても届きにくい。'],
+ ['osaka-public','大阪公立大学','大阪府','公立',84,'balanced',.40,80,'高い総合力を求める。英語の対策を後回しにしない。'],
+ ['ompu','大阪医科薬科大学','大阪府','私立',83,'science',0,0,'理数の記述と英語を磨く難関私立ルート。'],
+ ['kansai','関西医科大学','大阪府','私立',83,'balanced',0,0,'英数理の総合力で勝負。大学別演習まで時間を確保。'],
+ ['kindai','近畿大学','大阪府','私立',79,'speed',0,0,'標準問題を時間内に取り切る力が大切。'],
+ ['kobe','神戸大学','兵庫県','国立',85,'balanced',.35,81,'共通テストと理系科目を高い水準でそろえる。'],
+ ['hyogo','兵庫医科大学','兵庫県','私立',77,'balanced',0,0,'基礎から演習への切替時期が重要。'],
+ ['nara','奈良県立医科大学','奈良県','公立',83,'science',.40,80,'数学・理科を中心に二次対策を積む。一般選抜を簡略化。'],
+ ['wakayama','和歌山県立医科大学','和歌山県','公立',80,'balanced',.45,77,'共通テストと標準レベルの演習を両立。'],
+ ['tottori','鳥取大学','鳥取県','国立',78,'common',.50,78,'国語・地歴公民・情報まで含めた総合力を育てる。'],
+ ['shimane','島根大学','島根県','国立',77,'common',.55,75,'共通テストを軸に、苦手をなくして狙うルート。'],
+ ['okayama','岡山大学','岡山県','国立',83,'balanced',.40,79,'英数理の得点力に、共通テストの安定感を加える。'],
+ ['kawasaki','川崎医科大学','岡山県','私立',73,'speed',0,0,'このゲームでも油断は禁物。理系4科目の基礎をそろえる。'],
+ ['hiroshima','広島大学','広島県','国立',83,'science',.35,79,'数学・理科の理解を深めて二次で勝負。'],
+ ['yamaguchi','山口大学','山口県','国立',79,'balanced',.45,77,'共通テストの弱点を減らしてから二次を仕上げる。'],
+ ['tokushima','徳島大学','徳島県','国立',79,'common',.55,78,'共通テストが重要なゲーム設定。得意科目への集中しすぎに注意。'],
+ ['kagawa','香川大学','香川県','国立',79,'balanced',.45,78,'バランスよく育てた学力と過去問対策を活かす。'],
+ ['ehime','愛媛大学','愛媛県','国立',78,'balanced',.45,75,'全科目の基礎を固め、理系の標準問題を確実に。'],
+ ['kochi','高知大学','高知県','国立',77,'common',.50,76,'共通テストの取りこぼしを小さくする対策が合う。'],
+ ['kyushu','九州大学','福岡県','国立',85,'science',.35,80,'数学・理科で強みを作り、英語でも崩れない。'],
+ ['kurume','久留米大学','福岡県','私立',77,'speed',0,0,'4科目の基礎と、時間内に解き切る練習を重ねる。'],
+ ['fukuoka','福岡大学','福岡県','私立',77,'speed',0,0,'標準レベルの完成度と時間配分を詰める。'],
+ ['uoeh','産業医科大学','福岡県','私立',81,'science',.30,77,'産業医等の勤務を伴う修学資金制度がある。進路への理解も必要。'],
+ ['saga','佐賀大学','佐賀県','国立',78,'common',.50,77,'共通テストの総合力を土台に、理数の精度を上げる。'],
+ ['nagasaki','長崎大学','長崎県','国立',81,'balanced',.45,77,'英数理をバランスよく伸ばす。'],
+ ['kumamoto','熊本大学','熊本県','国立',80,'science',.40,78,'数学・理科で上積みし、共通テストでも安定を。'],
+ ['oita','大分大学','大分県','国立',77,'common',.50,76,'幅広い科目の基礎を先にそろえる戦略が合う。'],
+ ['miyazaki','宮崎大学','宮崎県','国立',77,'common',.50,77,'共通テストと標準問題の精度を高める。'],
+ ['kagoshima','鹿児島大学','鹿児島県','国立',79,'balanced',.45,77,'基礎を固め、苦手科目を残さずに二次へ。'],
+ ['ryukyu','琉球大学','沖縄県','国立',77,'common',.50,75,'共通テストの幅広い準備が効く。遠征費も出願支援から確保。']
+];
+export const PROFILE_NAMES={balanced:'英数理・総合型',science:'数学・理科型',common:'共通テスト型',english:'英語を活かす型',speed:'標準完答・速度型',elite:'最難関・記述型',choice:'得意3科目型','one-science':'理科1科目型'};
+export const SCHOOLS=rows.map((r,index)=>modelSchool({id:r[0],name:r[1],pref:r[2],type:r[3],profile:r[5],ctShare:r[6],ctGate:r[0]==='utokyo'?93:r[7],memo:r[8],index,region:regionOf(r[2]),schedule:r[0]==='yamanashi'?'後期':r[3]==='私立'?'私立':r[3]==='大学校'?'独自':'前期',fee:r[3]==='私立'?60000:r[3]==='大学校'?0:17000,travel:r[2]==='沖縄県'||r[2]==='北海道'?35000:18000}));
+export const SCHOOL_MAP=Object.fromEntries(SCHOOLS.map(s=>[s.id,s]));
+function regionOf(p){if(['北海道','青森県','岩手県','宮城県','秋田県','山形県','福島県'].includes(p))return '北海道・東北';if(['茨城県','栃木県','群馬県','埼玉県','千葉県','東京都','神奈川県'].includes(p))return '関東';if(['新潟県','富山県','石川県','福井県','山梨県','長野県','岐阜県','静岡県','愛知県','三重県'].includes(p))return '中部';if(['滋賀県','京都府','大阪府','兵庫県','奈良県','和歌山県'].includes(p))return '近畿';if(['鳥取県','島根県','岡山県','広島県','山口県','徳島県','香川県','愛媛県','高知県'].includes(p))return '中国・四国';return '九州・沖縄';}
+export const SOURCES=[
+ {title:'全国82校の名称・所在地・設置形態',publisher:'日本医学教育評価機構（JACME）',date:'2026年6月1日一覧',url:'https://www.jacme.or.jp/accreditation/evaluation_results.php',note:'認定状況の一覧を、医学教育機関の網羅確認に使用。認定の有無をゲーム難度には利用していません。'},
+ {title:'国公立医学部の難易度の相対関係',publisher:'河合塾 Kei-Net',date:'2027年度予想・2026年9月',url:'https://www.keinet.ne.jp/exam/ranking/2027/h_kei_k10.pdf',note:'難易度帯を参考に、別のゲームパラメータを設計。模試の偏差値を個人の合格確率に変換していません。'},
+ {title:'私立医学部の難易度の相対関係',publisher:'河合塾 Kei-Net',date:'2027年度予想・2026年9月',url:'https://www.keinet.ne.jp/exam/ranking/2027/h_kei_s10.pdf',note:'私立の難易度帯と科目数の参考資料。国公立と私立の偏差値を単純比較していません。'},
+ {title:'東京大学・一般選抜募集要項',publisher:'東京大学',date:'2026年度',url:'https://www.u-tokyo.ac.jp/content/400200766.pdf',note:'理三の国語・数学・理科2科目・外国語、個人面接を確認。共通テスト110点＋二次440点をモデルの比率に反映。'},
+ {title:'防衛医科大学校・医学科学生募集',publisher:'防衛省',date:'2026年実施・2027年入校',url:'https://www.mod.go.jp/gsdf/jieikanbosyu/pdf/y/r8_bouidaiigaku.pdf',note:'入校年4月1日で18歳以上21歳未満。3浪設定では年齢条件により出願不可。'},
+ {title:'東京女子医科大学・募集要項',publisher:'東京女子医科大学',date:'2026年度',url:'https://www.twmu-u.jp/wp-content/uploads/2026/04/75e589cd98b7899a3f5ee194da3bdb7b.pdf',note:'女子に限る募集であることを反映。'},
+ {title:'自治医科大学・修学資金',publisher:'自治医科大学',date:'2026年9月参照',url:'https://www.jichi.ac.jp/exam/medicine/backup/',note:'貸与期間の1.5倍の指定勤務等で返還免除。ゲームでは出願時に卒後の条件を確認します。'},
+ {title:'産業医科大学・修学資金',publisher:'産業医科大学',date:'2026年9月参照',url:'https://www.uoeh-u.ac.jp/view.php?pageId=6547',note:'貸与期間の1.5倍の産業医等の勤務を伴う制度。無条件の給付ではありません。'}
+];
+export const STORY_EVENTS=[
+ {week:3,title:'新しい参考書、もう一冊？',body:'書店には「これ一冊で逆転」の文字。机にはまだ、解き直していない問題がある。',image:'distracted',choices:[{label:'今の一冊を解き直す',hint:'復習残り −6／習慣 +3',effect:{debt:-6,habit:3}},{label:'発展問題集を買う',hint:'手持ち −3,000円／記述 +2',effect:{cash:-3000,writing:2}},{label:'まず一晩、ちゃんと寝る',hint:'体調 +8／ストレス −5',effect:{health:8,stress:-5}}]},
+ {week:7,title:'実験レポートの締切',body:'理学部の実験は、受験勉強の都合では待ってくれない。明日は提出日。',image:'overwhelmed',choices:[{label:'早めに片付けてから勉強',hint:'大学の遅れ −5／体調 −3',effect:{campusDebt:-5,health:-3}},{label:'徹夜で両方終わらせる',hint:'大学の遅れ −7／体調 −14',effect:{campusDebt:-7,health:-14}},{label:'教員に相談して計画を直す',hint:'大学の遅れ −3／ストレス −3',effect:{campusDebt:-3,stress:-3}}]},
+ {week:11,title:'医学部へ行きたい理由',body:'「理学部でも、研究はできるよね」。友人の何気ない一言に、言葉が詰まった。',image:'peek',choices:[{label:'自分の経験から言葉にする',hint:'面接 +7／ストレス −2',effect:{interview:7,stress:-2}},{label:'医療の現場について調べる',hint:'面接 +5／記述 +2',effect:{interview:5,writing:2}},{label:'今は目の前の勉強を優先',hint:'習慣 +2',effect:{habit:2}}]},
+ {week:15,title:'夏の時間割',body:'大学の授業がひと区切り。空いた時間を、そのまま勉強に足せばいいのだろうか。',image:'study-focused',choices:[{label:'睡眠を固定して毎日積む',hint:'習慣 +5／体調 +5',effect:{habit:5,health:5}},{label:'合宿形式で追い込む',hint:'記述 +5／ストレス +10',effect:{writing:5,stress:10}},{label:'一日休んで計画を立てる',hint:'体調 +10／ストレス −8',effect:{health:10,stress:-8}}]},
+ {week:19,title:'模試の判定を見て',body:'判定の一文字よりも、答案の中に次の一手がある。今回はどこを見る？',image:'sad',choices:[{label:'落とした標準問題を分析',hint:'復習残り −8／習慣 +3',effect:{debt:-8,habit:3}},{label:'記述の採点基準を確認',hint:'記述 +6',effect:{writing:6}},{label:'気持ちを切り替えて休む',hint:'ストレス −12',effect:{stress:-12}}]},
+ {week:27,title:'後期が始まる',body:'学生証を持って、また大学へ。受験と大学生活は、二つの時間割を生きることだ。',image:'peek',choices:[{label:'必修を確認して予定を整理',hint:'大学の遅れ −6／習慣 +2',effect:{campusDebt:-6,habit:2}},{label:'友人と課題の相談をする',hint:'大学の遅れ −4／ストレス −5',effect:{campusDebt:-4,stress:-5}},{label:'独力で全部こなす',hint:'記述 +3／ストレス +6',effect:{writing:3,stress:6}}]},
+ {week:23,title:'共通テストの出願',body:'写真、受験科目、登録内容。勉強と違って、締切はあとから取り戻せない。',image:'study-focused',choices:[{label:'項目を一つずつ照合して提出',hint:'共通テスト登録完了／習慣 +2',effect:{registered:true,habit:2}},{label:'家族と一緒に確認して提出',hint:'共通テスト登録完了／ストレス −4',effect:{registered:true,stress:-4}}]},
+ {week:31,title:'家族との受験会議',body:'「出願費は心配しなくていい。受けたいところを、きちんと考えよう」。家族の支援にも計画が要る。',image:'snack',choices:[{label:'受験校と交通費を整理する',hint:'受験支援枠 +80,000円',effect:{examBudget:80000}},{label:'冬の添削講座を相談する',hint:'手持ち +20,000円／記述 +3',effect:{cash:20000,writing:3}},{label:'まず今の不安を話す',hint:'ストレス −15／体調 +5',effect:{stress:-15,health:5}}]},
+ {week:35,title:'冬の誘惑',body:'合格体験記を読んでいたはずが、気づけば一時間。誰かの成功は、自分の今日を代わってくれない。',image:'distracted',choices:[{label:'閉じて、間違いノートへ',hint:'復習残り −7／習慣 +3',effect:{debt:-7,habit:3}},{label:'志望校の答案を一本書く',hint:'記述 +5／体調 −4',effect:{writing:5,health:-4}},{label:'散歩して頭を切り替える',hint:'体調 +8／ストレス −8',effect:{health:8,stress:-8}}]},
+ {week:40,title:'共通テストを終えて',body:'手元の自己採点。数字は変えられない。ここからの選択と、二次の答案は変えられる。',image:'peek',choices:[{label:'結果を見て出願を最終確認',hint:'ストレス −5／面接 +2',effect:{stress:-5,interview:2}},{label:'第一志望の二次対策に戻る',hint:'記述 +4',effect:{writing:4}},{label:'一晩休んでから考える',hint:'体調 +10',effect:{health:10}}]}
+];
+
+ACTIVITIES.push({id:'pachinko',name:'パチンコ',short:'遊',group:'life',color:'#a27855'});

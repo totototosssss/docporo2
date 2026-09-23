@@ -1,0 +1,3 @@
+// Official shop day-plan snapshot, 2026-09-23. Weekend/holiday five-hour budget incl. one drink.
+const shops=[['shibuya',12,'渋谷本店'],['shibuya2',12,'渋谷2号店'],['ikebukuro',12,'池袋1号店'],['ikebukuro2',12,'池袋2号店'],['shinjuku',12,'新宿店'],['kabukicho',12,'新宿歌舞伎町店'],['akihabara',12,'秋葉原店'],['suidobashi',12,'水道橋店'],['yokohama',13,'横浜店'],['omiya',10,'大宮店'],['namba',26,'大阪難波店'],['tenjin',39,'福岡天神店']];
+export const CAFES=shops.map(([slug,pref,branch])=>({id:'cafe-'+slug,pref,name:'JELLY JELLY CAFE '+branch,category:'ボードゲームカフェ',fee:2800,foodBudget:700,feeKind:'土日祝デイタイム',feeNote:'5時間・1ドリンク付きの予算。平日料金・延長・特別日は別。',source:'https://jellyjellycafe.com/'+slug,verifiedAt:'2026-09-23'}));

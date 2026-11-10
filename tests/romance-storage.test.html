@@ -1,0 +1,18 @@
+<!doctype html><meta charset="utf-8"><title>Romance save test</title><pre id="result">Running…</pre>
+<script type="module">
+import {createStorage} from '../storage.js';
+import {newGame} from '../engine.js';
+import {FICTIONAL_PEOPLE,queueRomanceAction,advanceRomance,validateRomance} from '../romance.js';
+const suffix=Date.now()+'-'+Math.random().toString(36).slice(2),dbName='romance-test-'+suffix,legacyKey='romance-test-key-'+suffix;
+const a=createStorage({dbName,legacyKey}),b=createStorage({dbName,legacyKey}),assert=(condition,message)=>{if(!condition)throw Error(message);};
+try {
+ await a.load();let s=queueRomanceAction(newGame(1),FICTIONAL_PEOPLE[0].id,'introduce');await a.save(JSON.stringify(s));
+ const stale=JSON.parse(await b.load());assert(validateRomance(stale),'loaded romance state');
+ const first=advanceRomance(s,{freeBlocks:1}),second=advanceRomance(stale,{freeBlocks:1});assert(first.executed&&second.executed,'both tabs computed a local action');
+ await a.save(JSON.stringify(s));let conflict=false;try{await b.save(JSON.stringify(stale))}catch(error){conflict=error.name==='StorageConflictError'}assert(conflict,'stale tab must be rejected');
+ const saved=JSON.parse(await b.load());assert(saved.romance.log.length===1,'only one action stored');assert(saved.cash===s.cash,'only one expense stored');
+ assert(!advanceRomance(saved,{freeBlocks:1}).executed,'same week remains idempotent after reload');
+ window.__romanceStorageResult={ok:true};document.querySelector('#result').textContent='PASS: romance save, stale writer conflict and same-week idempotence.';
+}catch(error){window.__romanceStorageResult={ok:false,error:error.stack||String(error)};document.querySelector('#result').textContent=window.__romanceStorageResult.error;}
+finally{await a.close();await b.close();indexedDB.deleteDatabase(dbName);localStorage.removeItem(legacyKey);localStorage.removeItem(legacyKey+':indexeddb-migrated-v1');}
+</script>

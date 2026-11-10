@@ -1,0 +1,20 @@
+import assert from 'node:assert/strict';
+import * as E from '../engine.js';
+import * as W from '../world.js';
+import * as H from '../housing.js';
+import * as F from '../family-story.js';
+import * as N from '../narrative.js';
+import * as M from '../hobby-milestones.js';
+const setup=()=>{const s=E.newGame(17);s.yearIndex=1;s.week=7;s.university.status='enrolled';s.world.health.diet='cook';s.world.secret.place='home';s.world.hobby='cook';s.world.hobbyProgress.cook=4;H.ensureHousing(s);return s;};
+let s=setup(),before=JSON.stringify(s);assert.equal(W.foodBudgetInfo(s).weeklyExtra,700);assert.equal(W.effectiveDiet(s),'cook');assert.equal(W.effectiveStudyPlace(s),'home');assert.equal(W.hobbyRestriction(s),'');
+s.housing.status='shelter';let r=W.livingRestrictions(s);assert(r.dietSuspended&&r.placeChanged&&r.hobbyReason);assert.equal(r.effectivePlace,'library');assert.equal(W.foodBudgetInfo(s).weeklyExtra,0);assert.equal(W.worldCost(s,{hobby:1}),0);assert.equal(s.world.health.diet,'cook');assert.equal(s.world.secret.place,'home');assert.equal(s.world.hobby,'cook');assert.throws(()=>W.configureWorld(s,'diet','cook'));assert.throws(()=>W.configureWorld(s,'place','home'));assert.throws(()=>W.configureWorld(s,'hobby','bath'));
+const snapshot=structuredClone(s),counts={hobby:1,exercise:0};const result=W.worldStep(s,counts,true);assert.equal(s.world.hobbyProgress.cook,4);assert.match(result.notes.join(''),/実行されませんでした/);assert.equal(M.milestoneInfo(s).blocked,true);assert.equal(M.milestoneInfo(s).ready,false);
+const family=F.familyStory(s,7);assert(!JSON.stringify(family).includes('食卓'));assert.match(family.body,/連絡/);
+const original={id:'lunch',image:'snack',choices:[{label:'別の定食',effect:{}},{label:'外で食べる',effect:{}},{label:'家で作る',effect:{health:1}}]};const event=N.enrichEncounter(s,original);assert.equal(event.choices[2].effect.health,1);assert(!JSON.stringify(event).includes('家の買い置き'));assert.equal(event.choices[2].label,'食べられるものを探す');
+let echoes=structuredClone(snapshot);echoes.journey.echoes=[{id:'family:7:1:8',title:'予定',body:'翌日も食卓はいつもどおりだった。話すかどうかは、また自分で選べる。',due:0,done:false}];N.queueEcho(echoes);assert(!echoes.pending.body.includes('食卓'));assert.equal(echoes.journey.echoes[0].body,'翌日も食卓はいつもどおりだった。話すかどうかは、また自分で選べる。');
+let bath=structuredClone(snapshot);bath.world.hobby='bath';assert(W.hobbyRestriction(bath));assert.equal(W.worldCost(bath,{hobby:1}),0);const health=bath.health,spirit=bath.lifestyle.spirit;W.worldStep(bath,{hobby:1},true);assert.equal(bath.health,health);assert.equal(bath.lifestyle.spirit,spirit);
+let restored=H.housingAction(snapshot,'consult');assert.equal(restored.housing.status,'housed');assert.equal(W.effectiveDiet(restored),'cook');assert.equal(W.effectiveStudyPlace(restored),'home');assert.equal(W.hobbyRestriction(restored),'');assert.equal(W.foodBudgetInfo(restored).weeklyExtra,700);assert.equal(M.milestoneInfo(restored).blocked,false);
+let budget=W.configureLiving(snapshot,{foodBudget:1200});assert.equal(W.foodBudgetInfo(budget).weeklyExtra,1400);assert.equal(W.worldCost(budget,{hobby:1}),1400);
+for(const status of ['leave','graduated']){let x=setup();x.university.status=status;x.world.secret.place='campus';x.world.hobby='club';assert.equal(W.effectiveStudyPlace(x),'library');assert(W.hobbyRestriction(x));assert.throws(()=>W.configureWorld(x,'place','campus'));assert.throws(()=>W.configureWorld(x,'hobby','club'));x.university.status='enrolled';assert.equal(W.effectiveStudyPlace(x),'campus');assert.equal(W.hobbyRestriction(x),'');}
+const old=setup();delete old.housing;assert.equal(W.effectiveDiet(old),'cook');assert.equal(W.effectiveStudyPlace(old),'home');assert.equal(W.hobbyRestriction(old),'');
+console.log('housing living tests passed');

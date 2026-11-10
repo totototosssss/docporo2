@@ -1,0 +1,27 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import * as E from '../engine.js';
+import * as X from '../exams.js';
+import * as U from '../utokyo-depth.js';
+import {SCHOOLS} from '../data.js';
+const golden=JSON.parse(fs.readFileSync(new URL('./utokyo-other-golden.json',import.meta.url),'utf8'));
+for(const seed of [7,123]){
+ const s=E.newGame(seed);for(const [i,id] of Object.keys(s.skills).entries()){s.skills[id]=seed===7?95+i*3:220-i*5;s.journey.topics[id]=s.journey.topics[id].map((_,j)=>s.skills[id]-(j%5));}s.writing=seed===7?68:260;s.interview=seed===7?45:95;if(seed===123)s.ct={score:91.5};s.groups.elite=12;s.papers.mastery.elite=8;
+ for(const school of SCHOOLS.filter(x=>x.id!=='utokyo'))for(const tactic of ['steady','check','attack']){const w=E.weights(s,school),f=X.examForecast(s,school,w,tactic),r=X.sitSecondary(s,school,w,tactic);assert.deepEqual({mean:f.mean,probability:f.probability,scale:f.scale,score:r.score,passed:r.passed,interviewOK:r.interviewOK},golden[seed][school.id+':'+tactic]);}
+}
+const school=SCHOOLS.find(x=>x.id==='utokyo'),s=E.newGame(3);for(const id of Object.keys(s.skills)){s.skills[id]=250;s.journey.topics[id]=s.journey.topics[id].map(()=>240);}s.writing=300;s.interview=85;s.ct={score:96};s.papers.mastery.utokyo=120;s.yearIndex=2;s.week=44;s.papers.records=Array.from({length:15},(_,i)=>({key:'utokyo',week:90+i,analyzed:true,retried:true}));
+const w=E.weights(s,school),f=X.examForecast(s,school,w,'steady'),quality=U.utokyoMultiplier(s,'utokyo');assert.ok(f.probability>0&&f.probability<.82);assert.ok(X.utokyoAdvice(E.newGame(9)).length>0);
+// Score calculation stays unchanged; the additional independent gate agrees with the forecast over many seeds.
+let wins=0,normalWins=0;const n=30000;for(let seed=0;seed<n;seed++){s.seed=seed;const r=X.sitSecondary(s,school,w,'steady'),normal=r.score>=r.cut&&r.interviewOK;normalWins+=Number(normal);assert.equal(r.passed,normal&&U.utokyoOutcomePass(s,'utokyo',true,X.draw(seed,'utokyo-depth')));wins+=Number(r.passed);}assert.ok(Math.abs(wins/n-f.probability)<.015);assert.ok(Math.abs(normalWins/n*quality-f.probability)<.015);
+const old=E.newGame(1);delete old.papers;const restored=E.migrateGame(JSON.parse(JSON.stringify(old)));assert.ok(Number.isFinite(X.examForecast(restored,school,E.weights(restored,school),'steady').probability));
+console.log('utokyo integration: all other schools unchanged, old save, forecast and actual outcomes passed; rate', (wins/n).toFixed(4));
+// The chosen aspiration permits early school-specific preparation but never changes focus by itself.
+const A=await import('../aspiration.js');let choice=E.newGame(14);assert.throws(()=>E.setTraining(choice,'balanced','utokyo'));const chosen=A.chooseAspiration(choice,'utokyo');assert.equal(chosen.training.focus,null);let prepared=E.setTraining(chosen,'balanced','utokyo');assert.equal(prepared.training.focus,'utokyo');assert.equal(prepared.training.style,school.profile);assert.equal(chosen.training.focus,null);let changed=A.chooseAspiration(prepared,'kyoto');assert.equal(changed.training.focus,'utokyo');assert.equal(E.setTraining(changed,'balanced','utokyo').training.focus,'utokyo');changed=A.clearAspiration(changed);assert.equal(changed.training.focus,'utokyo');
+for(const bad of ['missing','__proto__','constructor']){assert.throws(()=>E.setTraining(choice,bad));let malformed=structuredClone(choice);malformed.aspiration=bad;assert.throws(()=>E.setTraining(malformed,'balanced',bad));}
+let blocked=structuredClone(chosen);blocked.pending={kind:'story'};assert.throws(()=>E.setTraining(blocked,'balanced','utokyo'));blocked.pending=null;blocked.phase='ending';assert.throws(()=>E.setTraining(blocked,'balanced','utokyo'));
+const legacyFocused=E.newGame(17);delete legacyFocused.aspiration;legacyFocused.training.focus='utokyo';legacyFocused.training.style=school.profile;let legacyRestored=E.migrateGame(JSON.parse(JSON.stringify(legacyFocused)));assert.equal(E.setTraining(legacyRestored,'balanced','utokyo').training.focus,'utokyo');
+// A failed special requirement must have a reason consistent with the actual outcome.
+let attempted=E.newGame(3);attempted.yearIndex=2;attempted.week=44;for(const id of Object.keys(attempted.skills)){attempted.skills[id]=250;attempted.journey.topics[id]=attempted.journey.topics[id].map(()=>240);}attempted.writing=300;attempted.interview=85;attempted.ct={score:96};attempted.papers.mastery.utokyo=120;attempted.papers.records=Array.from({length:15},(_,i)=>({key:'utokyo',week:90+i,analyzed:true,retried:true}));attempted.phase='individual';attempted.pending={kind:'individual',scope:'front',ids:['utokyo']};attempted.applications=['utokyo'];let failureFound=false,successFound=false;
+for(let seed=0;seed<1000&&(!failureFound||!successFound);seed++){attempted.seed=seed;const direct=X.sitSecondary(attempted,school,E.weights(attempted,school),'steady');if(direct.score>=direct.cut&&direct.interviewOK&&!direct.depthOK){const result=E.takeIndividual(attempted).examResults.at(-1);assert.equal(result.passed,false);assert.match(result.reason,/答案の幅と再現/);failureFound=true;}if(direct.passed){const result=E.takeIndividual(attempted).examResults.at(-1);assert.equal(result.passed,true);assert.equal(result.reason,'合格');successFound=true;}}
+assert.ok(failureFound&&successFound);assert.ok(E.predict(chosen,school).advice.some(x=>/単元|答案|再現/.test(x)));
+console.log('utokyo integration: early preparation, input validation, preserved focus and outcome explanations passed');

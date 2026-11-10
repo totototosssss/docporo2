@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import * as E from '../engine.js';
+const s=E.newGame(123);s.phase='ending';s.university.grade=4;s.university.earned={'4:0:lab':3,'4:1:lab':3,'4:0:math':18};s.credits=24;
+assert.equal(E.graduationEligibility(s),'missing-history');assert.equal(E.canGraduate(s),false);assert.throws(()=>E.continueYear(s,'graduate'));
+let explicit=E.continueYear(s,'graduate-legacy');assert.equal(explicit.university.status,'graduated');assert.equal(explicit.university.grade,4);
+let pr=E.migrateGame(JSON.parse(JSON.stringify(s)));assert.equal(E.graduationEligibility(pr),'missing-history');
+for(let grade=1;grade<=3;grade++){s.university.earned[`${grade}:0:lab`]=3;s.university.earned[`${grade}:1:lab`]=3;s.university.earned[`${grade}:0:math`]=18;}
+assert.equal(E.graduationEligibility(s),'ready');assert.equal(E.canGraduate(s),true);assert.throws(()=>E.continueYear(s,'graduate-legacy'));
+let early=E.copy(s);early.university.grade=3;assert.equal(E.graduationEligibility(early),'ineligible');assert.throws(()=>E.continueYear(early,'graduate'));
+let incomplete=E.copy(s);delete incomplete.university.earned['4:0:lab'];assert.equal(E.graduationEligibility(incomplete),'ineligible');assert.throws(()=>E.continueYear(incomplete,'graduate-legacy'));
+let leave=E.copy(s);leave.university.status='leave';assert.equal(E.graduationEligibility(leave),'ineligible');
+s.weekly.style='university';s.world.secret.place='campus';let g=E.continueYear(s,'graduate');assert.equal(g.weekly.style,'balanced');assert.equal(g.world.secret.place,'library');assert.throws(()=>E.configureWorld(g,'place','campus'));assert.equal(g.university.status,'graduated');assert.equal(g.university.grade,4);assert.equal(g.university.graduatedYear,0);assert.equal(g.university.current,null);assert.equal(g.examBudget,s.examBudget+180000);assert.equal(E.lectureSlots(g),0);assert.equal(E.universityExamCost(g),0);assert.equal(E.activeCourses(g).length,0);assert.equal(E.calendarItems(g).filter(x=>x.kind==='university').length,0);assert.throws(()=>E.changeUniversity(g,{policy:'all'}));let plan=E.blankPlan();plan.counts.campus=1;assert.match(E.validatePlan(g,plan),/卒業/);
+let reloaded=E.migrateGame(JSON.parse(JSON.stringify(g)));assert.equal(reloaded.university.status,'graduated');reloaded.phase='ending';assert.equal(E.graduationEligibility(reloaded),'graduated');assert.throws(()=>E.continueYear(reloaded,'enrolled'));let next=E.continueYear(reloaded,'graduate');assert.equal(next.university.grade,4);assert.equal(next.university.graduatedYear,0);assert.equal(next.university.status,'graduated');assert.equal(next.university.current,null);assert.equal(next.examBudget,g.examBudget+180000);
+let history=E.copy(s);delete history.university.earned['2:0:lab'];history.pastYears=[{promotion:{ok:true,nextGrade:3}}];assert.equal(E.graduationEligibility(history),'ready');history.pastYears=[];assert.equal(E.graduationEligibility(history),'missing-history');
+console.log('graduation, legacy evidence, graduation persistence and guards: passed');

@@ -1,0 +1,36 @@
+import assert from 'node:assert/strict';
+import * as E from '../engine.js';
+import * as P from '../planner.js';
+import * as J from '../justice-story.js';
+import * as F from '../finance-system.js';
+import * as R from '../romance.js';
+import * as Market from '../market.js';
+const blank=s=>E.bestSchedule(s,E.blankPlan());
+const queued=s=>R.queueRomanceAction(s,R.FICTIONAL_PEOPLE[0].id,'introduce');
+// A single free block belongs to the justice action before romance, with no extra rest.
+let s=queued(J.chooseJustice(E.newGame(1),'participate'));
+let p=P.automaticPlan(s);const subject=Object.keys(p.counts).find(k=>['math','english','physics','chemistry','japanese','social','info'].includes(k)&&p.counts[k]>0);p.counts[subject]--;p=E.bestSchedule(s,p);
+assert.equal(E.capacity(s)-E.planCount(p),1);
+const before=JSON.stringify(s),preview=E.simulateWeek(s,p,{preview:true});assert.equal(JSON.stringify(s),before);assert.deepEqual(preview.justice,s.justice);assert.equal(preview.lastReport.justiceResult,null);assert.equal(preview.totals.rest,p.counts.rest);
+let out=E.simulateWeek(s,p);assert.equal(out.lastReport.justiceResult.kind,'joined');assert.equal(out.lastReport.romanceResult.executed,false);assert.match(out.lastReport.romanceResult.reason,/時間/);assert.equal(out.totals.blocks,E.planCount(p)+1);assert.equal(out.totals.rest,p.counts.rest);assert.equal(out.lastReport.income,50000);assert.equal(out.journey.ledger.at(-1).justiceReceived,50000);assert.equal(out.loan,s.loan);
+// Existing financial lending happens before justice, romance and automatic investing.
+let f=E.newGame(515);f=F.startEducationLoan(f,'interestFree');f.week=4;f.cash=1000;f=queued(J.chooseJustice(f,'participate'));f=Market.configureAutoInvestment(f,{id:'tech',budget:30000,reserve:0});p=blank(f);const cost=E.costOfPlan(p,f);out=E.simulateWeek(f,p);const msg=out.lastReport.romanceResult,trade=out.market.weekReport.autoInvestment,ledger=out.journey.ledger.at(-1);
+assert.equal(out.lastReport.financeEvents[0].amount,30000);assert.equal(out.lastReport.justiceResult.kind,'joined');assert.equal(msg.executed,true);assert.equal(trade.status,'filled');assert.equal(out.cash,1000+10000-cost+30000+50000-msg.cost-trade.total);assert.equal(ledger.loanReceived,30000);assert.equal(ledger.justiceReceived,50000);assert.equal(ledger.justiceCost,0);assert.equal(out.totals.blocks,2);assert.equal(out.lastReport.expense,cost+msg.cost);
+// A mandatory story and a justice notice both survive; story wins until cleared.
+let n=E.newGame(1);n.week=4;n=J.chooseJustice(n,'participate');n=E.simulateWeek(n,blank(n));n.week=7;n.pending=null;n.phase='study';out=E.simulateWeek(n,blank(n));assert.ok(out.justice.event);assert.ok(out.pending);assert.match(E.validatePlan(out,blank(out)),/出来事/);assert.throws(()=>J.acknowledgeJustice(out));const saved=JSON.stringify(out);assert.throws(()=>E.simulateWeek(out,blank(out)));assert.equal(JSON.stringify(out),saved);
+out.pending=null;out.phase='study';assert.match(E.validatePlan(out,blank(out)),/資金の話/);while(out.justice.event)out=J.acknowledgeJustice(out);
+// Fixed legal time cannot overlap allocated schedule slots, and is consumed once.
+let fixed=E.copy(out);fixed.justice.timeDue=3;assert.equal(E.justiceFixedBlocks(fixed),Math.min(3,Math.max(0,E.baseCapacity(fixed))));assert.equal(E.capacity(fixed),E.baseCapacity(fixed)-E.justiceFixedBlocks(fixed));p=P.automaticPlan(fixed);p=E.bestSchedule(fixed,p);assert.equal(Object.keys(p.schedule).length,E.planCount(p));const order=[0,3,6,9,12,1,4,7,10,13,16,19,11,14,17,20,15,18,2,5].filter(i=>(fixed.sleep==='short'?[0,1,2,3,4,5,6,7,9,10,11,12,13,14,15,16,17,18,19,20]:[0,1,3,4,6,7,9,10,11,12,13,14,15,16,17,18,19,20]).includes(i));const locked=order.slice(0,18+(fixed.sleep==='short'?2:0)-E.capacity(fixed));assert.ok(Object.keys(p.schedule).every(i=>!locked.includes(+i)));out=E.simulateWeek(fixed,p);assert.equal(out.justice.timeDue,3-E.justiceFixedBlocks(fixed));assert.equal(out.lastReport.justiceFixedBlocks,E.justiceFixedBlocks(fixed));
+// Recovery requires remaining cash after mandatory living costs and loan payments.
+let poor=E.copy(fixed);poor.justice.timeDue=0;poor.justice.caseStatus='unresolved';poor.justice.criminal.arrested=false;poor.cash=E.costOfPlan(E.blankPlan(),poor)+4999;poor.week=9;poor=J.scheduleJusticeRecovery(poor);out=E.simulateWeek(poor,blank(poor));assert.equal(out.lastReport.justiceResult.kind,'missed');assert.equal(out.journey.ledger.at(-1).justiceCost,0);assert.equal(out.cash,4999);assert.equal(out.justice.recovery,'available');
+let recovered=E.copy(poor);recovered.cash++;out=E.simulateWeek(recovered,blank(recovered));assert.equal(out.lastReport.justiceResult.kind,'recovered');assert.equal(out.cash,0);assert.equal(out.journey.ledger.at(-1).justiceCost,5000);assert.equal(out.lastReport.expense,E.costOfPlan(E.blankPlan(),recovered)+5000);assert.equal(out.spent-recovered.spent,out.lastReport.expense);
+// When all available time is committed, the offer is not executed or paid.
+let busy=J.chooseJustice(E.newGame(2),'participate');let busyPlan=P.automaticPlan(busy);assert.equal(E.capacity(busy)-E.planCount(busyPlan),0);out=E.simulateWeek(busy,busyPlan);assert.equal(out.lastReport.justiceResult.kind,'missed');assert.equal(out.journey.ledger.at(-1).justiceReceived,0);assert.equal(out.justice.action,'available');
+// Excess fixed duties carry forward rather than consuming time twice.
+let carry=E.copy(fixed);carry.journey.commitments=[{week:carry.week,blocks:E.baseCapacity(carry)-1,name:'予定',effect:{}}];assert.equal(E.baseCapacity(carry),1);assert.equal(E.justiceFixedBlocks(carry),1);out=E.simulateWeek(carry,blank(carry));assert.equal(out.justice.timeDue,2);assert.equal(out.lastReport.justiceFixedBlocks,1);
+// Loan repayment has priority over recovery and cannot be paid a second time.
+let debt=F.startEducationLoan(E.newGame(513),'interestFree');for(let m=1;m<31;m++){debt.yearIndex=Math.floor(m/12);debt.week=(m%12)*4;debt=F.advanceEducationLoan(debt).state;}
+debt.yearIndex=2;debt.week=28;debt.cash=1000;debt.justice=E.copy(poor.justice);debt.justice.recovery='available';debt.justice.recoveryScheduled=null;debt=J.scheduleJusticeRecovery(debt);out=E.simulateWeek(debt,blank(debt));const repay=out.lastReport.financeEvents.find(e=>e.kind==='repayment');assert.equal(repay.paid,1000+10000-E.costOfPlan(E.blankPlan(),debt));assert.equal(out.lastReport.justiceResult.kind,'missed');assert.equal(out.journey.ledger.at(-1).justiceCost,0);assert.equal(out.cash,0);
+// A pending notice across the year transition is never lost or advanced unconfirmed.
+let y=E.newGame(10);y.week=46;y=J.chooseJustice(y,'participate');y=E.simulateWeek(y,blank(y));assert.equal(y.justice.exposureDue,49);y.pending=null;y.phase='study';y=E.simulateWeek(y,blank(y));assert.equal(y.pending.kind,'final');y=E.takeFinal(y);y=E.continueYear(y,'enrolled');assert.equal(y.justice.exposureDue,49);y=E.simulateWeek(y,blank(y));y.pending=null;y.phase='study';y=E.simulateWeek(y,blank(y));assert.ok(y.justice.event);y.pending=null;y.phase='study';assert.match(E.validatePlan(y,blank(y)),/資金の話/);assert.equal(J.validateJustice(y),true);
+console.log('justice integration: scheduling priority, finance and investment accounting, preview, pending events, recovery and year rollover passed');

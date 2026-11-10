@@ -1,0 +1,56 @@
+<!doctype html><meta charset="utf-8"><title>Storage tests</title><pre id="result">Running…</pre>
+<script type="module">
+import {createStorage} from '../storage.js';
+const result=document.querySelector('#result'), prefix='docporo-test-'+Date.now()+'-'+Math.random().toString(36).slice(2);
+const dbNames=[],keys=[];
+const opts=(id,extra={})=>{const dbName=prefix+'-'+id,legacyKey=prefix+'-legacy-'+id;dbNames.push(dbName);keys.push(legacyKey,legacyKey+':indexeddb-migrated-v1');return {dbName,legacyKey,...extra};};
+const assert=(ok,message)=>{if(!ok)throw Error(message)};
+const rejects=async(p,name)=>{try{await p}catch(e){if(e.name===name)return;throw e}throw Error('Expected '+name)};
+const deleteDb=name=>new Promise((resolve,reject)=>{const r=indexedDB.deleteDatabase(name);r.onsuccess=resolve;r.onerror=()=>reject(r.error);r.onblocked=()=>reject(Error('delete blocked'));});
+try {
+  const aopts=opts('basic'),a=createStorage(aopts),b=createStorage(aopts);
+  await rejects(a.save('before load'),'StorageNotLoadedError');
+  assert(await a.load()===null,'fresh load');
+  await Promise.all([a.save('first'),a.save('second')]);
+  assert(await a.load()==='second','queued writes order');
+  assert(await b.load()==='second','second instance load');
+  await a.save('third');await rejects(b.save('stale'),'StorageConflictError');
+  assert(await b.load()==='third','reload latest after conflict');
+  await b.save('fourth');assert(await a.load()==='fourth','latest saved');
+  // Exactly one of two stale writers may win.
+  const race=await Promise.allSettled([a.save('race-a'),b.save('race-b')]);
+  assert(race.filter(x=>x.status==='fulfilled').length===1,'cross-tab compare and swap');
+  assert(race.find(x=>x.status==='rejected')?.reason.name==='StorageConflictError','race conflict');
+  await a.load();await a.remove();
+  const c=createStorage(aopts);assert(await c.load()===null,'tombstone load');
+  await a.close();await b.close();await c.close();
+
+  const lopts=opts('legacy',{validateLegacy:raw=>JSON.parse(raw).ok===true});
+  localStorage.setItem(lopts.legacyKey,'{"ok":true}');
+  const l=createStorage(lopts);assert(await l.load()==='{"ok":true}','legacy migration');
+  assert(localStorage.getItem(lopts.legacyKey)==='{"ok":true}','legacy retained');
+  await l.save('{"ok":true,"new":1}');await l.remove();await l.close();
+  const l2=createStorage(lopts);assert(await l2.load()===null,'deleted migrated save never resurrects');await l2.close();
+
+  const invalid=opts('invalid',{validateLegacy:()=>false});localStorage.setItem(invalid.legacyKey,'bad');
+  const invalidStore=createStorage(invalid);await rejects(invalidStore.load(),'StorageValidationError');
+  assert(localStorage.getItem(invalid.legacyKey)==='bad','invalid legacy retained');
+  assert(localStorage.getItem(invalid.legacyKey+':indexeddb-migrated-v1')===null,'invalid legacy not marked');await invalidStore.close();
+
+  const ropts=opts('recover',{validateLegacy:()=>true});localStorage.setItem(ropts.legacyKey,'old');
+  const r=createStorage(ropts);await r.load();await r.save('new');await deleteDb(ropts.dbName);
+  const r2=createStorage(ropts);await rejects(r2.load(),'StorageRecoveryRequiredError');
+  await rejects(r2.save('unexpected'),'StorageNotLoadedError');
+  await r2.recover('validated backup');assert(await r2.load()==='validated backup','explicit recovery');
+  assert(localStorage.getItem(ropts.legacyKey)==='old','recovery retained legacy');
+  await rejects(r.save('stale after recovery'),'StorageConflictError');await r.close();await r2.close();
+
+  const unavailable=createStorage(opts('unavailable',{indexedDB:{open(){throw Error('denied')}}}));
+  await rejects(unavailable.load(),'StorageUnavailableError');
+  const denied=createStorage(opts('denied',{localStorage:{getItem(){throw Error('denied')},setItem(){throw Error('denied')}}}));
+  await rejects(denied.load(),'StorageUnavailableError');await denied.close();
+
+  window.__storageTestResult={ok:true};result.textContent='PASS: migration, retention, queued saves, tab conflicts, tombstones, explicit recovery, invalid data, unavailable storage.';
+} catch(error) {window.__storageTestResult={ok:false,error:error.stack||String(error)};result.textContent=window.__storageTestResult.error;}
+finally {for(const name of dbNames)try{await deleteDb(name)}catch{}for(const key of keys)localStorage.removeItem(key);}
+</script>

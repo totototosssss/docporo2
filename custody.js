@@ -1,9 +1,9 @@
-import * as Market from './market.js?v=8.3';
-import * as Finance from './finance-system.js?v=8.3';
-import * as Housing from './housing.js?v=8.3';
-import * as Household from './household.js?v=8.3';
-import {ensureAging} from './aging.js?v=8.3';
-import * as Memory from './memory.js?v=8.3';
+import * as Market from './market.js?v=8.4';
+import * as Finance from './finance-system.js?v=8.4';
+import * as Housing from './housing.js?v=8.4';
+import * as Household from './household.js?v=8.4';
+import {ensureAging} from './aging.js?v=8.4';
+import * as Memory from './memory.js?v=8.4';
 
 const clone=s=>structuredClone(s), abs=s=>s.yearIndex*48+s.week;
 const nonnegative=n=>Number.isSafeInteger(n)&&n>=0;

@@ -1,6 +1,6 @@
-import {hobbyRestriction} from './world.js?v=8.3';
-import * as E from './engine.js?v=8.3';
-import {SUBJECTS,ACTIVITIES} from './data.js?v=8.3';
+import {hobbyRestriction} from './world.js?v=8.4';
+import * as E from './engine.js?v=8.4';
+import {SUBJECTS,ACTIVITIES} from './data.js?v=8.4';
 export const WEEK_STYLES=[
  {id:'balanced',name:'受験科目をまんべんなく',short:'全科目',text:'弱い科目を多めに。復習も続ける。'},
  {id:'math',name:'数学を詰め込む',short:'数学集中',text:'まとまった時間で、選んだ単元を深掘り。'},

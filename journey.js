@@ -1,9 +1,9 @@
-import {longTermStory} from './longterm.js?v=8.0';
-import {enrichStory} from './narrative.js?v=8.0';
-import {commonSubject} from './exams.js?v=8.0';
-import {SUBJECTS,SCHOOL_MAP,STORY_EVENTS} from './data.js?v=8.0';
-import {TOPICS,subjectTopics} from './curriculum.js?v=8.0';
-export {TOPICS} from './curriculum.js?v=8.0';
+import {longTermStory} from './longterm.js?v=8.1';
+import {enrichStory} from './narrative.js?v=8.1';
+import {commonSubject} from './exams.js?v=8.1';
+import {SUBJECTS,SCHOOL_MAP,STORY_EVENTS} from './data.js?v=8.1';
+import {TOPICS,subjectTopics} from './curriculum.js?v=8.1';
+export {TOPICS} from './curriculum.js?v=8.1';
 export const MOCK_WEEKS=[6,14,22,30,36];
 export const CHAPTERS=[['二つの春を歩く','春の基礎固め'],['穴を見つける','最初の模試'],['続ける仕組み','課題と仕事'],['夏の入口','前期の成績'],['伸びる夏に','苦手の補強'],['答案と向き合う','夏の総点検'],['もう一度、大学へ','後期の履修'],['願書を書く','出願の準備'],['譲れない一時間','記述の仕上げ'],['得点に変える','共通テスト'],['選ぶ、決める','受験校の確定'],['白衣の向こうへ','二次試験と春']];
 export function newJourney(s){return {topics:Object.fromEntries(SUBJECTS.map(a=>{const offsets=subjectTopics(s,a.id).map((_,i)=>[-8,-2,4,6][i%4]),mean=offsets.reduce((n,x)=>n+x,0)/offsets.length;return [a.id,offsets.map(v=>Math.max(0,s.skills[a.id]+v-mean))];})),focus:Object.fromEntries(SUBJECTS.map(a=>[a.id,'balanced'])),mocks:[],choices:[],commitments:[],bonds:{friend:30,mentor:20,family:55},work:{contract:'flex',reliability:100,experience:0,cooldown:0},ledger:[],badges:[]};}

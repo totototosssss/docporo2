@@ -1,11 +1,11 @@
-import {enrichBook} from './books.js?v=8.0';
-import * as H from './hangouts.js?v=8.0';
-import {VENUE_MAP,VENUE_EFFECTS,venueFee,venueMemory,activeExhibitions} from './venues.js?v=8.0';
-import {EXPANDED_CATALOG} from './expanded-catalog.js?v=8.0';
-import {FRIENDS,MEETUP_TOPICS,GUEST_LEGACY,SOCIAL_LINES} from './social.js?v=8.0';
-import {draw} from './exams.js?v=8.0';
-export {MEETUP_TOPICS} from './social.js?v=8.0';
-import {CATALOG} from './catalog.js?v=8.0';
+import {enrichBook} from './books.js?v=8.1';
+import * as H from './hangouts.js?v=8.1';
+import {VENUE_MAP,VENUE_EFFECTS,venueFee,venueMemory,activeExhibitions} from './venues.js?v=8.1';
+import {EXPANDED_CATALOG} from './expanded-catalog.js?v=8.1';
+import {FRIENDS,MEETUP_TOPICS,GUEST_LEGACY,SOCIAL_LINES} from './social.js?v=8.1';
+import {draw} from './exams.js?v=8.1';
+export {MEETUP_TOPICS} from './social.js?v=8.1';
+import {CATALOG} from './catalog.js?v=8.1';
 // Game effects are fictional. Item and venue metadata distinguish sourced prices from estimates.
 const clamp=(v,a=0,b=100)=>Math.max(a,Math.min(b,v));
 const clone=s=>JSON.parse(JSON.stringify(s));

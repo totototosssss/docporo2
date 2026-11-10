@@ -1,36 +1,36 @@
-import * as Finance from './finance-system.js?v=8.0';
-import * as Housing from './housing.js?v=8.0';
-import * as HH from './household.js?v=8.0';
-import {agingView,ensureAging} from './aging.js?v=8.0';
-import * as R from './romance.js?v=8.0';
-import * as J from './justice-story.js?v=8.0';
-import * as Custody from './custody.js?v=8.0';
-import {recordFamilyChoice,completeFamilyCommitments} from './family-story.js?v=8.0';
-import {recordDecision,queueEcho} from './narrative.js?v=8.0';
-export {dismissNarrative} from './narrative.js?v=8.0';
-import {advanceBook} from './books.js?v=8.0';
-export {BOOK_APPROACHES,bookScope,bookRecord,bookAdvice,bookApproach,setBookApproach} from './books.js?v=8.0';
-export {TABLE_STYLES,CHOICE_HINTS,hangoutView,resolveHangout,nextMessage,answerMessage} from './hangouts.js?v=8.0';
-import {VENUE_MAP,venueStatus} from './venues.js?v=8.0';
-export {VENUES,VENUE_CATEGORIES,VENUE_MAP,EXHIBITIONS,activeExhibitions,venueStatus,venueFee,selectVenue} from './venues.js?v=8.0';
-import * as WL from './worklife.js?v=8.0';
-export {STOCKS,marketValue,trade,shiftOffer,answerShift} from './worklife.js?v=8.0';
-export {CURRICULUM,SOCIAL_TRACKS,subjectTopics,subjectUnits} from './curriculum.js?v=8.0';
-import * as M from './memory.js?v=8.0';
-import * as X from './exams.js?v=8.0';
-import * as W from './world.js?v=8.0';
-import * as HM from './hobby-milestones.js?v=8.0';
-export {memoryQueue,setReview,learnAmount,setSocialTrack} from './memory.js?v=8.0';
-export {PAPER_MODES,setPaperMode,paperReadiness} from './exams.js?v=8.0';
-export {EXERCISES,HOBBIES,configureWorld,healthStatus,resolveEncounter} from './world.js?v=8.0';
-import {SUBJECTS,ACTIVITIES,METHODS,SCHOOLS,SCHOOL_MAP} from './data.js?v=8.0';
-import {COURSES,JOBS,newUniversity,ensureTerm,cloneUniversity,lectureSlots,universityStep,universityCredits,promotion,canGraduate,graduationEligibility,jobError,workIncome} from './life.js?v=8.0';
-import {newJourney,cloneJourney,topicFactor,updateTopics,commitmentsCost,universityExamCost,MOCK_WEEKS,addMock,storyAt,applyJourneyEffect,processCommitments,workStep,updateBadges} from './journey.js?v=8.0';
-import {EXAM_STYLES} from './admissions.js?v=8.0';
-import {newLifestyle,migrateSocial,gear,equippedBook,lifestyleCost,lifestyleStep,tripQuote,meetupQuote} from './lifestyle.js?v=8.0';
-export {COURSES,JOBS,lectureSlots,universityCredits,promotion,canGraduate,graduationEligibility,courseStatus,activeCourses,changeUniversity,changeJob,jobError,workIncome} from './life.js?v=8.0';
-export {TOPICS,CHAPTERS,MOCK_WEEKS,setStudyFocus,setContract,shiftWage,commitmentsCost,universityExamCost,storyAt,calendarItems,advisors,endingStory} from './journey.js?v=8.0';
-export {equipBook,equippedBook,MEETUP_TOPICS,PREFECTURES,OUTINGS,GUESTS,TALK_ROOMS,MEETUP_VENUES,ITEMS,ITEM_MAP,shopPrice,buyItem,useItem,configureLife,tripQuote,meetupQuote,secretBudget,caughtThisWeek,resolveCaught,gear} from './lifestyle.js?v=8.0';
+import * as Finance from './finance-system.js?v=8.1';
+import * as Housing from './housing.js?v=8.1';
+import * as HH from './household.js?v=8.1';
+import {agingView,ensureAging} from './aging.js?v=8.1';
+import * as R from './romance.js?v=8.1';
+import * as J from './justice-story.js?v=8.1';
+import * as Custody from './custody.js?v=8.1';
+import {recordFamilyChoice,completeFamilyCommitments} from './family-story.js?v=8.1';
+import {recordDecision,queueEcho} from './narrative.js?v=8.1';
+export {dismissNarrative} from './narrative.js?v=8.1';
+import {advanceBook} from './books.js?v=8.1';
+export {BOOK_APPROACHES,bookScope,bookRecord,bookAdvice,bookApproach,setBookApproach} from './books.js?v=8.1';
+export {TABLE_STYLES,CHOICE_HINTS,hangoutView,resolveHangout,nextMessage,answerMessage} from './hangouts.js?v=8.1';
+import {VENUE_MAP,venueStatus} from './venues.js?v=8.1';
+export {VENUES,VENUE_CATEGORIES,VENUE_MAP,EXHIBITIONS,activeExhibitions,venueStatus,venueFee,selectVenue} from './venues.js?v=8.1';
+import * as WL from './worklife.js?v=8.1';
+export {STOCKS,marketValue,trade,shiftOffer,answerShift} from './worklife.js?v=8.1';
+export {CURRICULUM,SOCIAL_TRACKS,subjectTopics,subjectUnits} from './curriculum.js?v=8.1';
+import * as M from './memory.js?v=8.1';
+import * as X from './exams.js?v=8.1';
+import * as W from './world.js?v=8.1';
+import * as HM from './hobby-milestones.js?v=8.1';
+export {memoryQueue,setReview,learnAmount,setSocialTrack} from './memory.js?v=8.1';
+export {PAPER_MODES,setPaperMode,paperReadiness} from './exams.js?v=8.1';
+export {EXERCISES,HOBBIES,configureWorld,healthStatus,resolveEncounter} from './world.js?v=8.1';
+import {SUBJECTS,ACTIVITIES,METHODS,SCHOOLS,SCHOOL_MAP} from './data.js?v=8.1';
+import {COURSES,JOBS,newUniversity,ensureTerm,cloneUniversity,lectureSlots,universityStep,universityCredits,promotion,canGraduate,graduationEligibility,jobError,workIncome} from './life.js?v=8.1';
+import {newJourney,cloneJourney,topicFactor,updateTopics,commitmentsCost,universityExamCost,MOCK_WEEKS,addMock,storyAt,applyJourneyEffect,processCommitments,workStep,updateBadges} from './journey.js?v=8.1';
+import {EXAM_STYLES} from './admissions.js?v=8.1';
+import {newLifestyle,migrateSocial,gear,equippedBook,lifestyleCost,lifestyleStep,tripQuote,meetupQuote} from './lifestyle.js?v=8.1';
+export {COURSES,JOBS,lectureSlots,universityCredits,promotion,canGraduate,graduationEligibility,courseStatus,activeCourses,changeUniversity,changeJob,jobError,workIncome} from './life.js?v=8.1';
+export {TOPICS,CHAPTERS,MOCK_WEEKS,setStudyFocus,setContract,shiftWage,commitmentsCost,universityExamCost,storyAt,calendarItems,advisors,endingStory} from './journey.js?v=8.1';
+export {equipBook,equippedBook,MEETUP_TOPICS,PREFECTURES,OUTINGS,GUESTS,TALK_ROOMS,MEETUP_VENUES,ITEMS,ITEM_MAP,shopPrice,buyItem,useItem,configureLife,tripQuote,meetupQuote,secretBudget,caughtThisWeek,resolveCaught,gear} from './lifestyle.js?v=8.1';
 export const VERSION=7;
 export const clamp=(x,a=0,b=100)=>Math.max(a,Math.min(b,x));
 export const round=(x,d=1)=>Number(x.toFixed(d));
@@ -74,27 +74,31 @@ export function eligibility(s,school){if(school.id==='defense')return '年齢条
 export function gates(s,school){const e=eligibility(s,school);return e?[{label:e,value:0,need:1,ok:false}]:[];}
 export function stateTactic(s,school,tactic){const f=X.examForecast(s,school,weights(s,school),tactic);return {bonus:f.tacticBonus,width:f.scale};}
 export function predict(s,school){const f=X.examForecast(s,school,weights(s,school),s.examTactic||'steady'),gs=gates(s,school),missing=gs.filter(g=>!g.ok),probability=missing.length||school.ctShare&&s.ct?.missed?0:f.probability,b=X.chanceBand(probability);const advice=[];const required=Object.keys(weights(s,school));const weak=required.slice().sort((a,b)=>s.skills[a]-s.skills[b])[0];if(s.skills[weak]<105)advice.push(SUBJECTS.find(a=>a.id===weak).name+'の失点を減らす');if(f.prep<50)advice.push('初見の答案を分析して、日を置いて解き直す');if(s.writing<65)advice.push('説明を省かず答案を書き、添削を受ける');if(s.interview<55)advice.push('医師を目指す理由を、自分の言葉で話す');if(school.ctShare>0&&!s.ct)advice.push('共通テストの苦手科目を残さない');if(school.id==='utokyo')advice.unshift(...X.utokyoAdvice(s));return {mean:f.mean,low:round(f.low),high:round(f.high),gates:gs,missing,margin:f.mean-f.cut,grade:missing.length?'出願資格を確認':b[3],chance:missing.length?'出願不可':school.ctShare&&s.ct?.missed?'未受験':b[2],probability,advice,scores:f.scores,canPass:!missing.length};}
+// The monthly support is paid in the first week of each four-week month.
+export const weeklySupport=s=>s.week%4===0?(s.family==='limited'?4000:10000):0;
+// Fixed commitments run before the rest of the week's income and expenses.
+function cashAfterCommitments(s){return (s.journey?.commitments||[]).filter(c=>c.week===s.week).reduce((cash,c)=>typeof c.effect?.cash==='number'?Math.max(0,Math.min(1e12,cash+c.effect.cash)):cash,s.cash);}
 export function costOfPlan(p,s=null){return p.counts.writing*1500+750+(s?Housing.housingWeeklyCost(s)+lifestyleCost(s,p.counts)+W.worldCost(s,p.counts)+HM.milestoneCost(s,p)+(p.counts.pachinko?(s.market?.pachinkoBudget||3000):0):0);}
-export function validatePlan(s,p){if(s.phase!=='study'||s.pending)return '先に表示中の出来事を確認してください。';const justiceWait=J.justiceBlocked(s);if(justiceWait)return justiceWait;if(!p?.counts||!p.methods)return '今週の予定を作り直してください。';if(s.university.status==='graduated'&&p.counts.campus)return '理学部は卒業済みです。大学の課題は予定できません。';if(p.counts.hobby&&W.hobbyRestriction(s))return W.hobbyRestriction(s)+' 趣味の時間を調整してください。';for(const a of ACTIVITIES){const n=p.counts[a.id];if(!Number.isInteger(n)||n<0||n>4)return '同じ行動を予定しすぎています。';}if(p.schedule){const entries=Object.entries(p.schedule);if(entries.some(([i,id])=>!Number.isInteger(+i)||+i<0||+i>20||!ACTIVITIES.some(a=>a.id===id))||ACTIVITIES.some(a=>entries.filter(([,id])=>id===a.id).length!==p.counts[a.id]))return '予定の配分を作り直してください。';}for(const a of SUBJECTS)if(!METHODS[p.methods[a.id]])return '教材レベルを選んでください。';if(p.counts.mock>1||p.counts.mock&&!MOCK_WEEKS.includes(s.week))return '模試は指定週に1コマで受けられます。';if(p.counts.pachinko>1)return 'パチンコは週に一度。予算を決めて切り上げよう。';if(p.counts.talk>2)return 'ライブトークは週2コマまでです。';if((p.counts.outing||p.counts.meetup)&&s.lifestyle.outing.venue&&venueStatus(s,VENUE_MAP[s.lifestyle.outing.venue]))return venueStatus(s,VENUE_MAP[s.lifestyle.outing.venue]);if(p.counts.outing&&p.counts.outing!==tripQuote(s).blocks)return `今回のお出かけは移動込みで${tripQuote(s).blocks}コマ必要です。`;if(p.counts.meetup&&p.counts.meetup!==tripQuote(s).blocks)return `今回のオフ会は移動込みで${tripQuote(s).blocks*3}時間必要です。`;if(p.counts.outing&&p.counts.meetup)return '一人で行くか、みんなで行くかを選んでください。';if(planCount(p)>capacity(s))return '今週の空き時間を超えています。';if(p.counts.work&&jobError(s,s.job))return jobError(s,s.job);if(costOfPlan(p,s)>s.cash+workIncome(s,p.counts.work))return '今週の費用が手持ちとバイト収入を超えます。';return null;}
+export function validatePlan(s,p){if(s.phase!=='study'||s.pending)return '先に表示中の出来事を確認してください。';const justiceWait=J.justiceBlocked(s);if(justiceWait)return justiceWait;if(!p?.counts||!p.methods)return '今週の予定を作り直してください。';if(s.university.status==='graduated'&&p.counts.campus)return '理学部は卒業済みです。大学の課題は予定できません。';if(p.counts.hobby&&W.hobbyRestriction(s))return W.hobbyRestriction(s)+' 趣味の時間を調整してください。';for(const a of ACTIVITIES){const n=p.counts[a.id];if(!Number.isInteger(n)||n<0||n>4)return '同じ行動を予定しすぎています。';}if(p.schedule){const entries=Object.entries(p.schedule);if(entries.some(([i,id])=>!Number.isInteger(+i)||+i<0||+i>20||!ACTIVITIES.some(a=>a.id===id))||ACTIVITIES.some(a=>entries.filter(([,id])=>id===a.id).length!==p.counts[a.id]))return '予定の配分を作り直してください。';}for(const a of SUBJECTS)if(!METHODS[p.methods[a.id]])return '教材レベルを選んでください。';if(p.counts.mock>1||p.counts.mock&&!MOCK_WEEKS.includes(s.week))return '模試は指定週に1コマで受けられます。';if(p.counts.pachinko>1)return 'パチンコは週に一度。予算を決めて切り上げよう。';if(p.counts.talk>2)return 'ライブトークは週2コマまでです。';if((p.counts.outing||p.counts.meetup)&&s.lifestyle.outing.venue&&venueStatus(s,VENUE_MAP[s.lifestyle.outing.venue]))return venueStatus(s,VENUE_MAP[s.lifestyle.outing.venue]);if(p.counts.outing&&p.counts.outing!==tripQuote(s).blocks)return `今回のお出かけは移動込みで${tripQuote(s).blocks}コマ必要です。`;if(p.counts.meetup&&p.counts.meetup!==tripQuote(s).blocks)return `今回のオフ会は移動込みで${tripQuote(s).blocks*3}時間必要です。`;if(p.counts.outing&&p.counts.meetup)return '一人で行くか、みんなで行くかを選んでください。';if(planCount(p)>capacity(s))return '今週の空き時間を超えています。';if(p.counts.work&&jobError(s,s.job))return jobError(s,s.job);if(costOfPlan(p,s)>cashAfterCommitments(s)+workIncome(s,p.counts.work)+weeklySupport(s))return '今週の費用が手持ちとバイト収入を超えます。';return null;}
 export function simulateWeek(state,p,{preview=false}={}){
  const invalid=validatePlan(state,p);if(invalid)throw new Error(invalid);const s=copy(state),before=state,c=p.counts,w=s.week,eff=efficiency(s)*(preview?1:1+noise(s.seed+w*9137)*.025),familyCommitments=s.journey.commitments.filter(x=>x.week===w),commitmentNotes=processCommitments(s),income=workIncome(s,c.work),gains={};
  if(!preview)ensureAging(s);
  if(!preview)completeFamilyCommitments(s,familyCommitments);
  const nStudy=SUBJECTS.reduce((n,a)=>n+c[a.id],0),reviewed=M.memoryStep(s,before,c,{...p,books:Object.fromEntries(SUBJECTS.map(a=>[a.id,equippedBook(s,a.id)])),boost:Object.fromEntries(SUBJECTS.map(a=>[a.id,Math.min(.08,gear(s,a.id))]))},eff),beforeUni=copy(s.skills),attended=lectureSlots(s),uni=universityStep(s,c.campus,eff),job=JOBS[s.job];if(s.job==='tutor'&&c.work)s.skills.math+=.10*c.work*eff;M.bridgeMemory(s,beforeUni);
- const rem=capacity(before)-planCount(p),projectedCash=Math.max(0,s.cash+income-costOfPlan(p,before)+(w%4===0?(before.family==='limited'?4000:10000):0)),projectedFinance=s.financeSystem?.educationLoan?Finance.advanceEducationLoan({...s,cash:projectedCash}).state.cash:projectedCash,justiceQuote=J.justiceQuote(before,{freeBlocks:rem,availableCash:projectedFinance}),justicePlannedBlocks=justiceQuote.ready?justiceQuote.blocks:0,projectedJusticeCash=projectedFinance+(justiceQuote.ready&&justiceQuote.kind==='action'?J.JUSTICE_OFFER.amount:0)-(justiceQuote.ready&&['recovery','counsel'].includes(justiceQuote.kind)?justiceQuote.cost:0),romanceQuote=R.quoteRomance(before,{freeBlocks:rem-justicePlannedBlocks,availableCash:projectedJusticeCash}),rest=c.rest+Math.min(Math.max(0,rem-justicePlannedBlocks-(romanceQuote.available?romanceQuote.blocks:0)),3);s.debt=clamp(s.debt+nStudy*.62+c.past*.6-c.review*(5+Math.min(2,gear(s,'review')))-c.mock*2,0,60);
+ const rem=capacity(before)-planCount(p),projectedCash=Math.max(0,s.cash+income-costOfPlan(p,before)+weeklySupport(before)),projectedFinance=s.financeSystem?.educationLoan?Finance.advanceEducationLoan({...s,cash:projectedCash}).state.cash:projectedCash,justiceQuote=J.justiceQuote(before,{freeBlocks:rem,availableCash:projectedFinance}),justicePlannedBlocks=justiceQuote.ready?justiceQuote.blocks:0,projectedJusticeCash=projectedFinance+(justiceQuote.ready&&justiceQuote.kind==='action'?J.JUSTICE_OFFER.amount:0)-(justiceQuote.ready&&['recovery','counsel'].includes(justiceQuote.kind)?justiceQuote.cost:0),romanceQuote=R.quoteRomance(before,{freeBlocks:rem-justicePlannedBlocks,availableCash:projectedJusticeCash}),rest=c.rest+Math.min(Math.max(0,rem-justicePlannedBlocks-(romanceQuote.available?romanceQuote.blocks:0)),3);s.debt=clamp(s.debt+nStudy*.62+c.past*.6-c.review*(5+Math.min(2,gear(s,'review')))-c.mock*2,0,60);
  s.habit=clamp(s.habit+(c.review>0?.8:-.5));s.writing+=c.writing*(.3+2.5/(1+s.writing/85))*eff*(1+Math.min(.08,gear(s,'writing')));s.interview+=c.interview*(.3+4/(1+s.interview/70))*eff*(1+Math.min(.10,gear(s,'interviewGear')));
  const style=s.training.style,prior=s.groups[style]||0,groupEff=eff*clamp((trainingMean(s)-30)/65,.2,1.15)*(1+Math.min(.08,gear(s,'prep'))+(s.lifestyle.effects.prepOnce||0));s.groups[style]=prior+c.past*1.2*groupEff/(1+prior/80);if(s.training.focus){const id=s.training.focus;s.prep[id]=(s.prep[id]||0)+c.past*1.6*groupEff;}s.training.sessions[style]=(s.training.sessions[style]||0)+c.past;
  const proof=X.paperStep(s,c.past,groupEff);
  s.health=clamp(s.health+8-agingView(s).recoveryPenalty+rest*8-nStudy*1.6-c.past*2-c.writing-c.review*.6-c.interview*.7-c.campus*.8-attended*.4-c.work*job.fatigue-c.mock*2-universityExamCost(before)*1.2-(s.sleep==='short'?12:0));
  s.stress=clamp(s.stress+nStudy*.5+c.past*.6+s.debt*.05+s.campusDebt*.07+c.work*job.stress-rest*3.8-1.5+(s.sleep==='short'?8:0));
  for(const a of SUBJECTS)advanceBook(s,equippedBook(s,a.id),c[a.id],eff);
- const beforeLife=copy(s.skills),world=W.worldStep(s,c,preview),lifestyle=lifestyleStep(s,c,eff,preview);M.bridgeMemory(s,beforeLife);const cost=costOfPlan(p,before);s.cash=Math.max(0,s.cash-cost+income+(w%4===0?(s.family==='limited'?4000:10000):0));s.income+=income;s.workHours+=c.work*3;s.spent+=cost;if(s.loan>0)s.loan=Math.round(s.loan*(1+(s.loanType==='consumer'?.15/52:0)));
+ const beforeLife=copy(s.skills),world=W.worldStep(s,c,preview),lifestyle=lifestyleStep(s,c,eff,preview);M.bridgeMemory(s,beforeLife);const cost=costOfPlan(p,before);s.cash=Math.max(0,s.cash-cost+income+weeklySupport(before));s.income+=income;s.workHours+=c.work*3;s.spent+=cost;if(s.loan>0)s.loan=Math.round(s.loan*(1+(s.loanType==='consumer'?.15/52:0)));
  const financeResult=s.financeSystem?.educationLoan?Finance.advanceEducationLoan(s):{state:s,events:[]};if(financeResult.state!==s)Object.assign(s,financeResult.state);const financeEvents=financeResult.events;
  const justiceAdvance=J.advanceJustice(s,before,{freeBlocks:rem,baseCapacity:baseCapacity(before),preview});if(justiceAdvance.state!==s)Object.assign(s,justiceAdvance.state);const justiceResult=justiceAdvance.report,justiceBlocks=justiceResult?.blocks||0,justiceReceived=justiceResult?.kind==='joined'?justiceResult.amount:0,justiceCost=['recovered','counsel'].includes(justiceResult?.kind)?justiceResult.cost:0;s.spent+=justiceCost;
  const romanceResult=!preview?R.advanceRomance(s,{freeBlocks:Math.max(0,rem-justiceBlocks)}):null,romanceCost=romanceResult?.executed?romanceResult.cost:0;
  s.totals.blocks+=planCount(p)+justiceBlocks+(romanceResult?.executed?romanceResult.blocks:0);s.totals.study+=nStudy;s.totals.review+=c.review;s.totals.rest+=rest;const notes=[...WL.finishShifts(s,c.work),...(!preview?WL.moneyStep(s,c):[]),...uni.notes,...commitmentNotes,...workStep(s,c.work),...world.notes,...lifestyle.notes];for(const event of financeEvents)notes.push(event.kind==='deposit'?`学びの貸与 ${event.amount.toLocaleString()}円を受け取った。`:event.kind==='repayment'?`貸与の返済 ${event.paid.toLocaleString()}円。未払い ${event.overdue.toLocaleString()}円。`:event.kind==='relief'?'今月の貸与返済は猶予された。':'貸与が終了した。');if(justiceResult)notes.push(justiceResult.text);if(romanceResult?.action)notes.push(romanceResult.executed?romanceResult.text:'連絡の予定：'+romanceResult.reason);let hobbyMilestone=null;if(!preview){hobbyMilestone=HM.finishMilestone(s,before,p);if(hobbyMilestone)notes.push(hobbyMilestone.cancelled?'趣味の節目は実行されませんでした。'+hobbyMilestone.reason:hobbyMilestone.title+'：'+hobbyMilestone.text);}if(proof)notes.push(proof.reason);if(reviewed.length)notes.push('一度閉じた解法を、白紙から思い出す練習をした。');if(s.debt>15)notes.push('復習の積み残しが増えている。');if(s.health<50)notes.push('疲れが残っている。眠る時間を作りたい。');for(const a of SUBJECTS)gains[a.id]=s.skills[a.id]-before.skills[a.id];
- let mock=null,scene=null;if(!preview){scene=W.vignette(s,c);if(c.mock)mock=addMock(s,noise(s.seed^w^0x188231));s.journey.ledger.push({week:w,year:s.yearIndex,work:income,payout:c.pachinko?(s.market.lastPachinko?.payout||0):0,materials:cost+romanceCost,justiceReceived,justiceCost,loanReceived:financeEvents.filter(e=>e.kind==='deposit').reduce((n,e)=>n+e.amount,0),loanPaid:financeEvents.filter(e=>e.kind==='repayment').reduce((n,e)=>n+e.paid,0),support:w%4===0?(s.family==='limited'?4000:10000):0,loanInterest:Math.max(0,s.loan-before.loan),cash:s.cash});updateBadges(s);}
- s.week++;ensureTerm(s);s.lastReport={week:w,year:s.yearIndex,gains,universityGains:uni.gains,mock,proof,scene,hobbyMilestone,romanceResult,justiceResult,justiceFixedBlocks:justiceFixedBlocks(before),financeEvents,reviewed,memories:lifestyle.memories,income:income+justiceReceived+(!preview&&c.pachinko?(s.market.lastPachinko?.payout||0):0),expense:cost+romanceCost+justiceCost,workHours:c.work*3,health:s.health-before.health,stress:s.stress-before.stress,spirit:s.lifestyle.spirit-before.lifestyle.spirit,notes,efficiency:eff};if(preview)return s;
+ let mock=null,scene=null;if(!preview){scene=W.vignette(s,c);if(c.mock)mock=addMock(s,noise(s.seed^w^0x188231));s.journey.ledger.push({week:w,year:s.yearIndex,work:income,payout:c.pachinko?(s.market.lastPachinko?.payout||0):0,materials:cost+romanceCost,justiceReceived,justiceCost,loanReceived:financeEvents.filter(e=>e.kind==='deposit').reduce((n,e)=>n+e.amount,0),loanPaid:financeEvents.filter(e=>e.kind==='repayment').reduce((n,e)=>n+e.paid,0),support:weeklySupport(before),loanInterest:Math.max(0,s.loan-before.loan),cash:s.cash});updateBadges(s);}
+ s.week++;ensureTerm(s);s.lastReport={week:w,year:s.yearIndex,gains,universityGains:uni.gains,mock,proof,scene,hobbyMilestone,romanceResult,justiceResult,justiceFixedBlocks:justiceFixedBlocks(before),financeEvents,reviewed,memories:lifestyle.memories,support:weeklySupport(before),income:income+justiceReceived+(!preview&&c.pachinko?(s.market.lastPachinko?.payout||0):0),expense:cost+romanceCost+justiceCost,workHours:c.work*3,health:s.health-before.health,stress:s.stress-before.stress,spirit:s.lifestyle.spirit-before.lifestyle.spirit,notes,efficiency:eff};if(preview)return s;
  s.history.push({week:w,skills:copy(s.skills),health:s.health,stress:s.stress,spirit:s.lifestyle.spirit,writing:s.writing,interview:s.interview,common:commonMean(s),plan:copy(p)});s.log.unshift({week:w,year:s.yearIndex,text:scene?scene.title+'：'+scene.text:notes[0]||'一週間を過ごした。'});s.log=s.log.slice(0,100);
  if(storyAt(s,w))s.pending={kind:'story',week:w};
  if(w===35){s.phase='applications';const next={kind:'applications',scope:'private'};if(s.pending)s.pending.next=next;else s.pending=next;}

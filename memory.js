@@ -1,6 +1,6 @@
-import {unitBookEffect} from './books.js?v=8.1';
-import {subjectTopics,subjectUnits,SOCIAL_TRACKS} from './curriculum.js?v=8.1';
-import {agingView} from './aging.js?v=8.1';
+import {unitBookEffect} from './books.js?v=8.2';
+import {subjectTopics,subjectUnits,SOCIAL_TRACKS} from './curriculum.js?v=8.2';
+import {agingView} from './aging.js?v=8.2';
 // Fictional learning model. Knowledge has no 100-point ceiling.
 export const SUBJECT_IDS=['math','english','physics','chemistry','japanese','social','info'];
 const copy=x=>structuredClone(x), cap=(x,a,b)=>Math.max(a,Math.min(b,x));

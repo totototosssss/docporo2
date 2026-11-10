@@ -1,5 +1,5 @@
-import {familyStory} from './family-story.js?v=8.1';
-import {twistStory} from './twists.js?v=8.1';
+import {familyStory} from './family-story.js?v=8.2';
+import {twistStory} from './twists.js?v=8.2';
 // Continuing-year scenes use only retained game records. Each id is selected once.
 const pick=(label,hint,effect,after,echo,commitment=null)=>({label,hint,effect,after,echo,...(commitment?{commitment}:{})});
 const scene=(id,week,title,body,choices,image='study-focused',lines=[])=>({id,week,title,body,image,lines,choices});

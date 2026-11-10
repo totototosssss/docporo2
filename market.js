@@ -1,4 +1,4 @@
-import {draw} from './exams.js?v=8.1';
+import {draw} from './exams.js?v=8.2';
 
 // Fictional parameters: not market data, an investment forecast, or a calibrated estimate.
 export const STOCKS=[
@@ -144,11 +144,12 @@ export function processDividends(s){
 }
 // Called once by the real weekly simulation on its private state copy, never in preview.
 export function marketWeek(s){
- const m=ensureMarket(s),notes=[],abs=absolute(s),weekStart=m.orderHistory.length,blocked=new Set(m.orders.map(o=>o.id));let autoResult=null;
+ const m=ensureMarket(s),notes=[],abs=absolute(s),weekStart=m.orderHistory.length;let autoResult=null;
  const dividends=processDividends(s);for(const d of dividends)notes.push(`${stock(d.id).name}の配当 ${d.total.toLocaleString('ja-JP')}円。`);
  // Stale orders from interrupted or old saves expire without being executed later.
  for(const o of m.orders.filter(o=>o.year*48+o.week<abs)){if(o.side==='buy')s.cash+=o.reservedCash;m.orderHistory.push({...o,status:'expired',closedYear:s.yearIndex,closedWeek:s.week,day:null});notes.push(`${stock(o.id).name}の指値注文は期限切れ。`);}
  m.orders=m.orders.filter(o=>o.year*48+o.week>=abs);
+ const blocked=new Set(m.orders.map(o=>o.id));
  for(let day=0;day<MARKET_RULES.daysPerWeek;day++){
   const r=draw(s.seed,`market:regime:${abs}:${day}`);
   m.volatility=m.volatility==='stress'?(r<.30?'normal':'stress'):(r<.04?'stress':'normal');

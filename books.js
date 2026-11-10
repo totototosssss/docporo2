@@ -1,4 +1,4 @@
-import {subjectUnits} from './curriculum.js?v=8.1';
+import {subjectUnits} from './curriculum.js?v=8.2';
 export const BOOK_APPROACHES={explain:{name:'解説を読み、理由を確かめる',hint:'初めての範囲を理解する。読めた箇所と再現できる箇所は別に記録。'},solve:{name:'自力で解いて、答え合わせ',hint:'解説に頼らず手を動かし、詰まった理由を探す。'},recall:{name:'閉じて、白紙から解き直す',hint:'前に学んだ範囲へ戻る。読んでいない章の代わりにはならない。'},timed:{name:'時間を測って取り組む',hint:'慣れた内容を時間内に仕上げる。初めての範囲を進める速度は控えめ。'}};
 export const BOOK_REVIEW_SOURCES=['https://benkyo-koryaku.com/nyumon-kiso-chigai/','https://genronkai.com/nishijintojinmachi/uncategorized/118/','https://juken-terrace.com/archives/良問の風の使い方・特徴'];
 const legacy={'real-44':['english','foundation'],'real-45':['english','foundation'],'real-46':['english','practice'],'real-47':['math','practice'],'real-48':['physics','practice'],'real-49':['physics','advanced'],mathbook:['math','foundation'],englishbook:['english','practice'],physicsbook:['physics','practice'],chembook:['chemistry','practice'],japanesebook:['japanese','practice'],socialbook:['social','practice'],infobook:['info','foundation']};

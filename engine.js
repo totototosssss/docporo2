@@ -1,36 +1,37 @@
-import * as Finance from './finance-system.js?v=8.2';
-import * as Housing from './housing.js?v=8.2';
-import * as HH from './household.js?v=8.2';
-import {agingView,ensureAging} from './aging.js?v=8.2';
-import * as R from './romance.js?v=8.2';
-import * as J from './justice-story.js?v=8.2';
-import * as Custody from './custody.js?v=8.2';
-import {recordFamilyChoice,completeFamilyCommitments} from './family-story.js?v=8.2';
-import {recordDecision,queueEcho} from './narrative.js?v=8.2';
-export {dismissNarrative} from './narrative.js?v=8.2';
-import {advanceBook} from './books.js?v=8.2';
-export {BOOK_APPROACHES,bookScope,bookRecord,bookAdvice,bookApproach,setBookApproach} from './books.js?v=8.2';
-export {TABLE_STYLES,CHOICE_HINTS,hangoutView,resolveHangout,nextMessage,answerMessage} from './hangouts.js?v=8.2';
-import {VENUE_MAP,venueStatus} from './venues.js?v=8.2';
-export {VENUES,VENUE_CATEGORIES,VENUE_MAP,EXHIBITIONS,activeExhibitions,venueStatus,venueFee,selectVenue} from './venues.js?v=8.2';
-import * as WL from './worklife.js?v=8.2';
-export {STOCKS,marketValue,trade,shiftOffer,answerShift} from './worklife.js?v=8.2';
-export {CURRICULUM,SOCIAL_TRACKS,subjectTopics,subjectUnits} from './curriculum.js?v=8.2';
-import * as M from './memory.js?v=8.2';
-import * as X from './exams.js?v=8.2';
-import * as W from './world.js?v=8.2';
-import * as HM from './hobby-milestones.js?v=8.2';
-export {memoryQueue,setReview,learnAmount,setSocialTrack} from './memory.js?v=8.2';
-export {PAPER_MODES,setPaperMode,paperReadiness} from './exams.js?v=8.2';
-export {EXERCISES,HOBBIES,configureWorld,healthStatus,resolveEncounter} from './world.js?v=8.2';
-import {SUBJECTS,ACTIVITIES,METHODS,SCHOOLS,SCHOOL_MAP} from './data.js?v=8.2';
-import {COURSES,JOBS,newUniversity,ensureTerm,cloneUniversity,lectureSlots,universityStep,universityCredits,promotion,canGraduate,graduationEligibility,jobError,workIncome} from './life.js?v=8.2';
-import {newJourney,cloneJourney,topicFactor,updateTopics,commitmentsCost,universityExamCost,MOCK_WEEKS,addMock,storyAt,applyJourneyEffect,processCommitments,workStep,updateBadges} from './journey.js?v=8.2';
-import {EXAM_STYLES} from './admissions.js?v=8.2';
-import {newLifestyle,migrateSocial,gear,equippedBook,lifestyleCost,lifestyleStep,tripQuote,meetupQuote} from './lifestyle.js?v=8.2';
-export {COURSES,JOBS,lectureSlots,universityCredits,promotion,canGraduate,graduationEligibility,courseStatus,activeCourses,changeUniversity,changeJob,jobError,workIncome} from './life.js?v=8.2';
-export {TOPICS,CHAPTERS,MOCK_WEEKS,setStudyFocus,setContract,shiftWage,commitmentsCost,universityExamCost,storyAt,calendarItems,advisors,endingStory} from './journey.js?v=8.2';
-export {equipBook,equippedBook,MEETUP_TOPICS,PREFECTURES,OUTINGS,GUESTS,TALK_ROOMS,MEETUP_VENUES,ITEMS,ITEM_MAP,shopPrice,buyItem,useItem,configureLife,tripQuote,meetupQuote,secretBudget,caughtThisWeek,resolveCaught,gear} from './lifestyle.js?v=8.2';
+import * as Talent from './talent.js?v=8.3';
+import * as Finance from './finance-system.js?v=8.3';
+import * as Housing from './housing.js?v=8.3';
+import * as HH from './household.js?v=8.3';
+import {agingView,ensureAging} from './aging.js?v=8.3';
+import * as R from './romance.js?v=8.3';
+import * as J from './justice-story.js?v=8.3';
+import * as Custody from './custody.js?v=8.3';
+import {recordFamilyChoice,completeFamilyCommitments} from './family-story.js?v=8.3';
+import {recordDecision,queueEcho} from './narrative.js?v=8.3';
+export {dismissNarrative} from './narrative.js?v=8.3';
+import {advanceBook} from './books.js?v=8.3';
+export {BOOK_APPROACHES,bookScope,bookRecord,bookAdvice,bookApproach,setBookApproach} from './books.js?v=8.3';
+export {TABLE_STYLES,CHOICE_HINTS,hangoutView,resolveHangout,nextMessage,answerMessage} from './hangouts.js?v=8.3';
+import {VENUE_MAP,venueStatus} from './venues.js?v=8.3';
+export {VENUES,VENUE_CATEGORIES,VENUE_MAP,EXHIBITIONS,activeExhibitions,venueStatus,venueFee,selectVenue} from './venues.js?v=8.3';
+import * as WL from './worklife.js?v=8.3';
+export {STOCKS,marketValue,trade,shiftOffer,answerShift} from './worklife.js?v=8.3';
+export {CURRICULUM,SOCIAL_TRACKS,subjectTopics,subjectUnits} from './curriculum.js?v=8.3';
+import * as M from './memory.js?v=8.3';
+import * as X from './exams.js?v=8.3';
+import * as W from './world.js?v=8.3';
+import * as HM from './hobby-milestones.js?v=8.3';
+export {memoryQueue,setReview,learnAmount,setSocialTrack} from './memory.js?v=8.3';
+export {PAPER_MODES,setPaperMode,paperReadiness} from './exams.js?v=8.3';
+export {EXERCISES,HOBBIES,configureWorld,healthStatus,resolveEncounter} from './world.js?v=8.3';
+import {SUBJECTS,ACTIVITIES,METHODS,SCHOOLS,SCHOOL_MAP} from './data.js?v=8.3';
+import {COURSES,JOBS,newUniversity,ensureTerm,cloneUniversity,lectureSlots,universityStep,universityCredits,promotion,canGraduate,graduationEligibility,jobError,workIncome} from './life.js?v=8.3';
+import {newJourney,cloneJourney,topicFactor,updateTopics,commitmentsCost,universityExamCost,MOCK_WEEKS,addMock,storyAt,applyJourneyEffect,processCommitments,workStep,updateBadges} from './journey.js?v=8.3';
+import {EXAM_STYLES} from './admissions.js?v=8.3';
+import {newLifestyle,migrateSocial,gear,equippedBook,lifestyleCost,lifestyleStep,tripQuote,meetupQuote} from './lifestyle.js?v=8.3';
+export {COURSES,JOBS,lectureSlots,universityCredits,promotion,canGraduate,graduationEligibility,courseStatus,activeCourses,changeUniversity,changeJob,jobError,workIncome} from './life.js?v=8.3';
+export {TOPICS,CHAPTERS,MOCK_WEEKS,setStudyFocus,setContract,shiftWage,commitmentsCost,universityExamCost,storyAt,calendarItems,advisors,endingStory} from './journey.js?v=8.3';
+export {equipBook,equippedBook,MEETUP_TOPICS,PREFECTURES,OUTINGS,GUESTS,TALK_ROOMS,MEETUP_VENUES,ITEMS,ITEM_MAP,shopPrice,buyItem,useItem,configureLife,tripQuote,meetupQuote,secretBudget,caughtThisWeek,resolveCaught,gear} from './lifestyle.js?v=8.3';
 export const VERSION=7;
 export const clamp=(x,a=0,b=100)=>Math.max(a,Math.min(b,x));
 export const round=(x,d=1)=>Number(x.toFixed(d));
@@ -40,7 +41,7 @@ const noise=seed=>{const r=rng(seed);return r()+r()-1;};
 function hash(s){let h=2166136261;for(const c of s)h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0;}
 export function newGame(seed=Math.floor(Math.random()*4294967295),options={}){
  const s={yearIndex:0,ronin:3,pastYears:[],university:newUniversity(),job:'short',income:0,workHours:0,version:VERSION,seed:seed>>>0,week:0,started:true,target:null,family:options.family||'standard',womenEligible:options.womenEligible??false,sleep:'steady',skills:{math:58,english:32,physics:32,chemistry:32,japanese:32,social:32,info:32},health:82,stress:28,habit:18,debt:0,campusDebt:0,credits:0,cash:80000,examBudget:options.family==='limited'?180000:600000,spent:0,writing:14,interview:14,prep:{},groups:{},applications:[],registered:false,ct:null,results:[],pending:null,phase:'study',history:[],log:[{week:0,year:0,text:'3浪目の4月。理学部の学生として、医学部への一年を始める。'}],totals:{blocks:0,study:0,review:0,rest:0},loan:0,loanType:null,pledged:false,accepted:null,lastReport:null,commonTactic:'steady',examTactic:'steady',privateDone:false,publicDone:false,training:{style:'balanced',focus:null,proofs:{},sessions:{},attempts:[]},lifestyle:newLifestyle(options.home??12)};
- ensureTerm(s);s.journey=newJourney(s);s.memory=M.newMemory(s);s.papers=X.newPapers();s.world=W.newWorld(s);s.examResults=[];s.market=WL.newMarket();s.curriculum={social:'geo',banks:{}};s.weekly={style:'balanced',work:0,exercise:1,pace:'steady'};s.yearStartSkills=copy(s.skills);migrateSocial(s);HH.ensureHousehold(s);return s;
+ s.talent=Talent.newTalent(s.seed);ensureTerm(s);s.journey=newJourney(s);s.memory=M.newMemory(s);s.papers=X.newPapers();s.world=W.newWorld(s);s.examResults=[];s.market=WL.newMarket();s.curriculum={social:'geo',banks:{}};s.weekly={style:'balanced',work:0,exercise:1,pace:'steady'};s.yearStartSkills=copy(s.skills);migrateSocial(s);HH.ensureHousehold(s);return s;
 }
 export function calendar(week,yearIndex=0){const w=Math.min(week,47);return {month:(Math.floor(w/4)+3)%12+1,week:w%4+1,year:(w<36?2026:2027)+yearIndex,label:`${(Math.floor(w/4)+3)%12+1}月 第${w%4+1}週`};}
 export const isTerm=week=>week<16||(week>=24&&week<40);
@@ -84,7 +85,7 @@ export function simulateWeek(state,p,{preview=false}={}){
  const invalid=validatePlan(state,p);if(invalid)throw new Error(invalid);const s=copy(state),before=state,c=p.counts,w=s.week,eff=efficiency(s)*(preview?1:1+noise(s.seed+w*9137)*.025),familyCommitments=s.journey.commitments.filter(x=>x.week===w),commitmentNotes=processCommitments(s),income=workIncome(s,c.work),gains={};
  if(!preview)ensureAging(s);
  if(!preview)completeFamilyCommitments(s,familyCommitments);
- const nStudy=SUBJECTS.reduce((n,a)=>n+c[a.id],0),reviewed=M.memoryStep(s,before,c,{...p,books:Object.fromEntries(SUBJECTS.map(a=>[a.id,equippedBook(s,a.id)])),boost:Object.fromEntries(SUBJECTS.map(a=>[a.id,Math.min(.08,gear(s,a.id))]))},eff),beforeUni=copy(s.skills),attended=lectureSlots(s),uni=universityStep(s,c.campus,eff),job=JOBS[s.job];if(s.job==='tutor'&&c.work)s.skills.math+=.10*c.work*eff;M.bridgeMemory(s,beforeUni);
+ const nStudy=SUBJECTS.reduce((n,a)=>n+c[a.id],0),reviewed=M.memoryStep(s,before,c,{...p,books:Object.fromEntries(SUBJECTS.map(a=>[a.id,equippedBook(s,a.id)])),boost:Object.fromEntries(SUBJECTS.map(a=>[a.id,Math.min(.08,gear(s,a.id))]))},eff*Talent.learningTalent(s)),beforeUni=copy(s.skills),attended=lectureSlots(s),uni=universityStep(s,c.campus,eff),job=JOBS[s.job];if(s.job==='tutor'&&c.work)s.skills.math+=.10*c.work*eff;M.bridgeMemory(s,beforeUni);
  const rem=capacity(before)-planCount(p),projectedCash=Math.max(0,s.cash+income-costOfPlan(p,before)+weeklySupport(before)),projectedFinance=s.financeSystem?.educationLoan?Finance.advanceEducationLoan({...s,cash:projectedCash}).state.cash:projectedCash,justiceQuote=J.justiceQuote(before,{freeBlocks:rem,availableCash:projectedFinance}),justicePlannedBlocks=justiceQuote.ready?justiceQuote.blocks:0,projectedJusticeCash=projectedFinance+(justiceQuote.ready&&justiceQuote.kind==='action'?J.JUSTICE_OFFER.amount:0)-(justiceQuote.ready&&['recovery','counsel'].includes(justiceQuote.kind)?justiceQuote.cost:0),romanceQuote=R.quoteRomance(before,{freeBlocks:rem-justicePlannedBlocks,availableCash:projectedJusticeCash}),rest=c.rest+Math.min(Math.max(0,rem-justicePlannedBlocks-(romanceQuote.available?romanceQuote.blocks:0)),3);s.debt=clamp(s.debt+nStudy*.62+c.past*.6-c.review*(5+Math.min(2,gear(s,'review')))-c.mock*2,0,60);
  s.habit=clamp(s.habit+(c.review>0?.8:-.5));s.writing+=c.writing*(.3+2.5/(1+s.writing/85))*eff*(1+Math.min(.08,gear(s,'writing')));s.interview+=c.interview*(.3+4/(1+s.interview/70))*eff*(1+Math.min(.10,gear(s,'interviewGear')));
  const style=s.training.style,prior=s.groups[style]||0,groupEff=eff*clamp((trainingMean(s)-30)/65,.2,1.15)*(1+Math.min(.08,gear(s,'prep'))+(s.lifestyle.effects.prepOnce||0));s.groups[style]=prior+c.past*1.2*groupEff/(1+prior/80);if(s.training.focus){const id=s.training.focus;s.prep[id]=(s.prep[id]||0)+c.past*1.6*groupEff;}s.training.sessions[style]=(s.training.sessions[style]||0)+c.past;
@@ -145,5 +146,5 @@ function migrateLegacy(old){if(!old?.skills||!Array.isArray(old.history)||![1,2,
  // Preserve paid legacy applications and earned study. No new target is selected before applications.
  if(s.pending?.kind==='applications')s.pending.scope=s.week>=38?'public':'private';s.yearStartSkills=s.yearStartSkills||copy(s.skills);s.log.unshift({week:s.week,year:s.yearIndex,text:'新版に引き継ぎ。学力・単位・出願・資金を保存。これからの答案を、学習ノートに残していく。'});return s;
 }
-export function migrateGame(old){if(!old?.skills||!Array.isArray(old.history))return null;let s=[5,6,7].includes(old.version)?cleanText(copy(old)):migrateLegacy(old);if(!s)return null;if(!s.memory)s.memory=M.newMemory(s);if(!s.papers)s.papers=X.newPapers();if(!s.world)s.world=W.newWorld(s);s.examResults=s.examResults||[];s.curriculum=s.curriculum||{social:'geo',banks:{}};s.weekly=s.weekly||{style:'balanced',work:0,exercise:1,pace:'steady'};M.migrateMemory(s);s.market=s.market||WL.newMarket();migrateSocial(s);if(!HH.validateHousehold(s))throw Error('家族の記録を読み込めません。');HH.ensureHousehold(s);s.version=7;return s;}
+export function migrateGame(old){if(!old?.skills||!Array.isArray(old.history))return null;let s=[5,6,7].includes(old.version)?cleanText(copy(old)):migrateLegacy(old);if(!s)return null;if(!Object.hasOwn(old,'talent'))delete s.talent;if(!Talent.validTalent(s))throw Error('学習特性の記録を確認できません。');if(!s.memory)s.memory=M.newMemory(s);if(!s.papers)s.papers=X.newPapers();if(!s.world)s.world=W.newWorld(s);s.examResults=s.examResults||[];s.curriculum=s.curriculum||{social:'geo',banks:{}};s.weekly=s.weekly||{style:'balanced',work:0,exercise:1,pace:'steady'};M.migrateMemory(s);s.market=s.market||WL.newMarket();migrateSocial(s);if(!HH.validateHousehold(s))throw Error('家族の記録を読み込めません。');HH.ensureHousehold(s);s.version=7;return s;}
 export function continueYear(state,mode='enrolled'){if(state.phase!=='ending')throw new Error('一年の結果を確認してから翌年へ。');if(!['enrolled','leave','graduate','graduate-legacy'].includes(mode))throw new Error('翌年の進路を選んでください。');if(state.university.status==='graduated'&&mode!=='graduate')throw new Error('卒業後は、卒業後の生活を続けてください。');if(mode==='graduate'&&state.university.status!=='graduated'&&!canGraduate(state))throw new Error('卒業の条件を満たしていません。');if(mode==='graduate-legacy'&&graduationEligibility(state)!=='missing-history')throw new Error('卒業の条件を満たしていません。');const s=copy(state),pr=promotion(s),wasGraduated=s.university.status==='graduated',graduating=mode==='graduate'||mode==='graduate-legacy';s.pastYears.push({year:s.yearIndex,ronin:s.ronin,results:copy(s.results),credits:s.credits,income:s.income,workHours:s.workHours,promotion:pr,history:s.history,mocks:copy(s.journey.mocks),ledger:copy(s.journey.ledger),choices:copy(s.journey.choices),seed:s.seed});s.yearIndex++;s.ronin++;s.seed=hash(`${s.seed}:next:${s.yearIndex}`);s.week=0;s.phase='study';s.pending=null;s.results=[];s.accepted=null;s.ct=null;s.registered=false;s.applications=[];s.applicationPayments={};s.target=null;s.history=[];s.lastReport=null;s.pledged=false;s.privateDone=false;s.publicDone=false;s.university.lastPromotion=pr;if(graduating){if(!wasGraduated){s.university.graduatedYear=s.yearIndex-1;s.university.graduationEvidence=mode==='graduate-legacy'?'player-confirmed':'recorded';}s.university.status='graduated';if(s.weekly?.style==='university')s.weekly.style='balanced';if(s.world.secret.place==='campus')s.world.secret.place='library';}else{s.university.grade=pr.nextGrade;s.university.status=mode;}s.university.current=null;s.university.policy=mode==='enrolled'?'all':'skip';s.examBudget+=s.family==='limited'?80000:(mode!=='enrolled'||!pr.ok?180000:300000);M.longBreak(s,3);s.examResults=[];for(const id of Object.keys(s.prep))s.prep[id]*=.72;for(const id of Object.keys(s.groups))s.groups[id]*=.85;s.writing=Math.max(0,s.writing-1);s.health=clamp(s.health+8);s.stress=clamp(s.stress+8);s.debt*=.6;s.campusDebt=0;s.totals={blocks:0,study:0,review:0,rest:0};s.income=0;s.workHours=0;s.commonTactic='steady';s.examTactic='steady';ensureTerm(s);s.yearStartSkills=copy(s.skills);s.journey.mocks=[];s.journey.ledger=[];s.journey.commitments=[];s.journey.work.cooldown=Math.max(0,s.journey.work.cooldown-48);s.university.examPolicy='sit';s.training.focus=null;s.training.proofs={};s.training.attempts=[];s.lifestyle.usedWeek=[];s.lifestyle.effects={};updateBadges(s);s.log.unshift({week:0,year:s.yearIndex,text:`${s.ronin}浪目へ。${graduating?(wasGraduated?'卒業後の生活を続ける':'理学部を卒業して再挑戦'):mode==='leave'?'休学して再挑戦':pr.ok?'進級して在学しながら再挑戦':'留年・再履修しながら再挑戦'}。道具・学力・資金・取得単位を引き継いだ。`});return s;}

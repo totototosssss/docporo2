@@ -1,6 +1,6 @@
-import {SCHOOL_MAP,SUBJECTS} from './data.js?v=8.2';
-import {EXAM_STYLES} from './admissions.js?v=8.2';
-import {weights,eligibility} from './engine.js?v=8.2';
+import {SCHOOL_MAP,SUBJECTS} from './data.js?v=8.3';
+import {EXAM_STYLES} from './admissions.js?v=8.3';
+import {weights,eligibility} from './engine.js?v=8.3';
 
 // A school to keep in view is independent of applications and training settings.
 export function chooseAspiration(state,id){

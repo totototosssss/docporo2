@@ -1,6 +1,6 @@
-import {unitBookEffect} from './books.js?v=8.2';
-import {subjectTopics,subjectUnits,SOCIAL_TRACKS} from './curriculum.js?v=8.2';
-import {agingView} from './aging.js?v=8.2';
+import {unitBookEffect} from './books.js?v=8.3';
+import {subjectTopics,subjectUnits,SOCIAL_TRACKS} from './curriculum.js?v=8.3';
+import {agingView} from './aging.js?v=8.3';
 // Fictional learning model. Knowledge has no 100-point ceiling.
 export const SUBJECT_IDS=['math','english','physics','chemistry','japanese','social','info'];
 const copy=x=>structuredClone(x), cap=(x,a,b)=>Math.max(a,Math.min(b,x));
@@ -15,18 +15,48 @@ export function memoryStep(s,before,counts,plan,eff,external={}){
  const w=absoluteWeek(s),m=s.memory,reviewed=[],forgettingFactor=agingView(s).forgettingFactor;
  for(const id of SUBJECT_IDS){const focus=s.journey.focus[id],n=counts[id]||0,days=plan.schedule?new Set(Object.entries(plan.schedule).filter(([,a])=>a===id).map(([k])=>Math.floor(+k/3))).size:Math.min(3,n),factor=days>1?1.07:1;
   m.cells[id].forEach((cell,i)=>{const units=subjectUnits(s,id),group=units[Number(focus)]?.group,members=units.filter(u=>u.group===group).length;const raw=j=>j===Number(focus)?4:units[j]?.group===group?1.7:.65,totalWeight=units.reduce((sum,_,j)=>sum+raw(j),0);const weight=focus==='balanced'?1:raw(i)*m.cells[id].length/totalWeight;const bookEffect=unitBookEffect(s,plan.books?.[id],i,plan.methods[id]);const gain=learnAmount(cell.knowledge,plan.methods[id])*n*weight*eff*factor*(1+(plan.boost?.[id]||0)+bookEffect.boost)*(1-Math.max(0,n-2)*.12);const ext=Math.max(0,external[id]||0);
-   if(n||ext){const age=w-cell.last;cell.knowledge+=gain+ext;cell.accessible+=(cell.knowledge-cell.accessible)*Math.min(.94,.42+n*.22)+gain*.1;cell.accessible=Math.min(cell.knowledge,cell.accessible);if(age>=1&&n){cell.stability=Math.min(110,cell.stability*(1+.07*Math.min(age,5)+bookEffect.stability)+.15);cell.retrievals++;}cell.last=w;}
+   if(n||ext){const age=w-cell.last;cell.knowledge+=gain+ext;cell.accessible+=(cell.knowledge-cell.accessible)*Math.min(.94,.42+n*.22)+gain*.1;cell.accessible=Math.min(cell.knowledge,cell.accessible);if(age>=1&&n){cell.stability=Math.max(cell.stability,Math.min(110,cell.stability*(1+.07*Math.min(age,5)+bookEffect.stability)+.15));cell.retrievals++;}cell.last=w;}
    else cell.accessible=Math.max(0,cell.accessible*Math.exp(-forgettingFactor/(Math.max(2,cell.stability)*8)));
    if(w-cell.last>14)cell.knowledge*=.999;
+   cell.accessible=Math.min(cell.knowledge,cell.accessible);
   });
  }
  let queue=memoryQueue(s);if(m.mode==='weak')queue.sort((a,b)=>a.value-b.value);if(m.mode==='subject')queue=queue.filter(x=>x.id===m.subject);
  const budget=(counts.review||0)*Math.ceil(Object.values(m.cells).reduce((n,row)=>n+row.length,0)/6);
- for(const q of queue.slice(0,budget)){const cell=m.cells[q.id][q.i],age=w-cell.last;if(age>0){const recover=cell.knowledge-cell.accessible;cell.accessible+=recover*.85;cell.stability=Math.min(160,cell.stability*(1.20+Math.min(age,10)*.022)+.3);cell.retrievals++;cell.last=w;reviewed.push({...q,recovered:recover*.85});}}
+ for(const q of queue.slice(0,budget)){const cell=m.cells[q.id][q.i],age=w-cell.last;if(age>0){const recover=Math.max(0,cell.knowledge-cell.accessible);cell.accessible+=recover*.85;cell.stability=Math.max(cell.stability,Math.min(160,cell.stability*(1.20+Math.min(age,10)*.022)+.3));cell.retrievals++;cell.last=w;reviewed.push({...q,recovered:recover*.85});}}
  m.lastReview=reviewed;syncMemory(s);return reviewed;
 }
 export function bridgeMemory(s,before){for(const id of SUBJECT_IDS){const d=s.skills[id]-before[id];if(d>0)for(const c of s.memory.cells[id]){c.knowledge+=d;c.accessible+=d;}}syncMemory(s);}
 export function longBreak(s,weeks=3){for(const row of Object.values(s.memory.cells))for(const c of row){c.accessible*=Math.exp(-weeks/(Math.max(2,c.stability)*8));c.last-=weeks;}syncMemory(s);}
 
-export function migrateMemory(s){for(const id of SUBJECT_IDS){const count=subjectTopics(s,id).length,old=s.memory.cells[id];if(old.length===count)continue;const average=old.reduce((n,c)=>n+c.accessible,0)/old.length;const row=Array.from({length:count},(_,i)=>({...old[Math.floor(i*old.length/count)]}));const delta=average-row.reduce((n,c)=>n+c.accessible,0)/count;for(const c of row){c.accessible+=delta;c.knowledge+=delta;}s.memory.cells[id]=row;s.journey.focus[id]='balanced';}syncMemory(s);return s;}
+// Older curricula had fewer units. Validate before modifying the cloned game so
+// malformed input is rejected without changing the user's stored record.
+const MEMORY_LIMIT=1e12;
+function normalizeLegacyRow(row){
+ if(!Array.isArray(row)||row.length===0||row.length>10000)throw Error('学習記録の単元を確認できません。');
+ for(const c of row){if(!c||typeof c!=='object'||Array.isArray(c)||!['knowledge','accessible','stability','last','retrievals'].every(k=>Number.isFinite(c[k]))||Math.abs(c.knowledge)>MEMORY_LIMIT||Math.abs(c.accessible)>MEMORY_LIMIT||c.stability<0||c.stability>MEMORY_LIMIT||!Number.isSafeInteger(c.last)||!Number.isSafeInteger(c.retrievals)||c.retrievals<0)throw Error('学習記録の数値を確認できません。');}
+ // Earlier resampling could make a small number of units negative. Repair only
+ // small negatives in otherwise positive rows, preserving their aggregate when possible.
+ for(const key of ['knowledge','accessible']){
+  const values=row.map(c=>c[key]),positive=values.reduce((n,v)=>n+Math.max(0,v),0),total=values.reduce((n,v)=>n+v,0),highest=Math.max(...values),lowest=Math.min(...values);
+  if(!Number.isFinite(total)||!Number.isFinite(positive))throw Error('学習記録の数値を確認できません。');
+  if(lowest<0){if(highest<=0||total<0||-lowest>Math.max(1,highest*.1))throw Error('学習記録の数値を確認できません。');const factor=total/positive;for(const c of row)c[key]=Math.max(0,c[key])*factor;}
+ }
+ // Old passive decay could leave accessible just above retained knowledge.
+ for(const c of row)c.accessible=Math.min(c.knowledge,c.accessible);
+}
+function resizeMemoryRow(old,count){
+ // Average overlapping old/new intervals: both means are preserved and no
+ // negative adjustment is applied to individual units.
+ return Array.from({length:count},(_,i)=>{const start=i*old.length/count,end=(i+1)*old.length/count,cell={...old[Math.min(old.length-1,Math.floor(start))]};let knowledge=0,accessible=0;for(let j=Math.floor(start);j<Math.ceil(end);j++){const weight=Math.max(0,Math.min(end,j+1)-Math.max(start,j))/(end-start);knowledge+=old[j].knowledge*weight;accessible+=old[j].accessible*weight;}cell.knowledge=knowledge;cell.accessible=Math.min(knowledge,accessible);return cell;});
+}
+export function migrateMemory(s){
+ if(!s.memory||typeof s.memory!=='object'||!s.memory.cells||typeof s.memory.cells!=='object'||!Number.isSafeInteger(absoluteWeek(s)))throw Error('学習記録を確認できません。');
+ const cells=copy(s.memory.cells),originalBanks=s.curriculum?.banks;let banks=null;
+ if(originalBanks!=null){if(typeof originalBanks!=='object'||Array.isArray(originalBanks))throw Error('学習記録を確認できません。');banks=copy(originalBanks);}
+ for(const id of SUBJECT_IDS)normalizeLegacyRow(cells[id]);
+ if(banks)for(const row of Object.values(banks))normalizeLegacyRow(row);
+ const resized=[];for(const id of SUBJECT_IDS){const count=subjectTopics(s,id).length,old=cells[id];if(old.length===count)continue;cells[id]=resizeMemoryRow(old,count);resized.push(id);}
+ s.memory.cells=cells;if(banks)s.curriculum.banks=banks;for(const id of resized)s.journey.focus[id]='balanced';syncMemory(s);
+}
 export function setSocialTrack(state,track){if(!SOCIAL_TRACKS[track])throw Error('地歴公民の科目を選んでください。');if(state.phase!=='study'||state.pending)throw Error('出来事を確認してから選ぼう。');if(state.registered)throw Error('共通テスト登録後は地歴公民を変更できません。');const s=copy(state);s.curriculum=s.curriculum||{social:'geo',banks:{}};s.curriculum.banks=s.curriculum.banks||{};s.curriculum.banks[s.curriculum.social]=s.memory.cells.social;s.curriculum.social=track;s.memory.cells.social=s.curriculum.banks[track]||subjectTopics(s,'social').map(()=>({knowledge:32,accessible:32,stability:5,last:absoluteWeek(s),retrievals:0}));s.journey.focus.social='balanced';syncMemory(s);return s;}

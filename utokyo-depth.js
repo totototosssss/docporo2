@@ -22,8 +22,10 @@ export function utokyoDepth(state){
  const reproduction=1-Math.exp(-completedWeeks.size/16);
  const latest=attempts.length?Math.max(...attempts.map(r=>r.week)):null;
  const recentAttempt=latest!==null&&now-latest<=12;
- // Floors leave a small chance without every component; the ceiling is a game-balance choice.
- const multiplier=cap(.82*(.15+.85*breadth)*(.15+.85*depth)*(.12+.88*reproduction)*(.75+.25*Number(recentAttempt)));
+ // The usual .82 factor stays in place; exceptionally broad, deep and repeatedly
+ // reproduced preparation can gradually exceed it, without a fixed 82% ceiling.
+ const exceptional=sigmoid((weakest-400)/40)*sigmoid((nonnegative(state.writing)-400)/50)*(1-Math.exp(-Math.max(0,nonnegative(state.papers?.mastery?.utokyo)-200)/100))*(1-Math.exp(-Math.max(0,completedWeeks.size-32)/16))*Number(recentAttempt);
+ const multiplier=cap((.82+.18*exceptional)*(.15+.85*breadth)*(.15+.85*depth)*(.12+.88*reproduction)*(.75+.25*Number(recentAttempt)));
  return {breadth,depth,reproduction,completed:completedWeeks.size,recentAttempt,multiplier};
 }
 export function utokyoMultiplier(state,schoolId){return schoolId==='utokyo'?utokyoDepth(state).multiplier:1;}

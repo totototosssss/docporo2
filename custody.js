@@ -1,8 +1,9 @@
-import * as Market from './market.js?v=8.2';
-import * as Finance from './finance-system.js?v=8.2';
-import * as Housing from './housing.js?v=8.2';
-import * as Household from './household.js?v=8.2';
-import {ensureAging} from './aging.js?v=8.2';
+import * as Market from './market.js?v=8.3';
+import * as Finance from './finance-system.js?v=8.3';
+import * as Housing from './housing.js?v=8.3';
+import * as Household from './household.js?v=8.3';
+import {ensureAging} from './aging.js?v=8.3';
+import * as Memory from './memory.js?v=8.3';
 
 const clone=s=>structuredClone(s), abs=s=>s.yearIndex*48+s.week;
 const nonnegative=n=>Number.isSafeInteger(n)&&n>=0;
@@ -60,6 +61,9 @@ export function advanceCustodyWeek(state,{preview=false}={}){
  if(c.lastProcessedWeek===abs(state))throw Error('この週は処理済みです。');
  if(![state.cash,state.spent,state.loan].every(nonnegative))throw Error('資金の記録を確認できません。');
  let s=clone(state);if(preview)return s;s=clearMarketPlans(s);clearOrdinaryPlans(s);ensureAging(s);
+ // Advance the same passive forgetting as an ordinary week with no study or review.
+ // There is no catch-up on load: legacy saves begin with their existing memory values.
+ Memory.memoryStep(s,s,{}, {methods:{}},1);
  const w=s.week,year=s.yearIndex,now=abs(s),rent=Housing.housingWeeklyCost(s),paid=Math.min(s.cash,rent),unpaid=rent-paid;
  if(!nonnegative(s.custody.rentArrears+unpaid))throw Error('家賃の未払い額を確認できません。');
  if(!nonnegative(s.spent+paid))throw Error('支出の記録を確認できません。');

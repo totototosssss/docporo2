@@ -1,6 +1,6 @@
-import {OUTING_STORIES} from './outing-stories.js?v=8.2';
-import {FRIENDS} from './social.js?v=8.2';
-import {draw} from './exams.js?v=8.2';
+import {OUTING_STORIES} from './outing-stories.js?v=8.3';
+import {FRIENDS} from './social.js?v=8.3';
+import {draw} from './exams.js?v=8.3';
 export const TABLE_STYLES={cooperate:'協力して同じ目標へ',light:'短いルールで何度も遊ぶ',bluff:'駆け引きと正体隠匿',strategy:'じっくり作戦を練る'};
 const cap=(x)=>Math.max(0,Math.min(100,x));
 export function validateSocial(s){const x=s.social;if(x==null)return true;if(typeof x!=='object'||Array.isArray(x))return false;

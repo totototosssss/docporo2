@@ -1,6 +1,7 @@
-import {OUTING_STORIES} from './outing-stories.js?v=8.4';
-import {FRIENDS} from './social.js?v=8.4';
-import {draw} from './exams.js?v=8.4';
+import {OUTING_STORIES} from './outing-stories.js?v=8.5';
+import {FRIENDS} from './social.js?v=8.5';
+import {draw} from './exams.js?v=8.5';
+import {justiceBlocked} from './justice-story.js?v=8.5';
 export const TABLE_STYLES={cooperate:'協力して同じ目標へ',light:'短いルールで何度も遊ぶ',bluff:'駆け引きと正体隠匿',strategy:'じっくり作戦を練る'};
 const cap=(x)=>Math.max(0,Math.min(100,x));
 export function validateSocial(s){const x=s.social;if(x==null)return true;if(typeof x!=='object'||Array.isArray(x))return false;
@@ -29,9 +30,11 @@ export function resolveHangout(state,index){if(state.pending?.kind!=='hangout')t
 export function nextMessage(s){return ensureSocial(s).messages.find(m=>!m.reply&&m.due<=s.yearIndex*48+s.week)||null;}
 const replies={continue:[['覚えてる。あの話、もう少し聞きたい。','うん、次に話せるときに続きを。'],['話してくれてありがとう。続きはまた今度。','こちらこそ。またゆっくり話そう。'],['あの日の続きを聞けるの、楽しみにしてる。','じゃあ、そのときに思い出しながら話そう。']],later:[['今は少し忙しいけど、また落ち着いたら話そう。','分かった。返事は急がなくて大丈夫。'],['覚えてるよ。今日は短い返事でごめんね。','読んでもらえただけでうれしい。またね。'],['今は手が離せないから、また時間のあるときに。','了解。続きはそのときにしよう。']]};
 function messageVariant(id,mode){let h=2166136261;for(const c of String(id))h=Math.imul(h^c.charCodeAt(0),16777619);return replies[mode][(h>>>0)%replies[mode].length];}
-export function answerMessage(state,id,mode){if(state.pending||state.phase!=='study')throw Error('今の出来事を先に確認しよう。');const s=structuredClone(state),social=ensureSocial(s),m=social.messages.find(x=>x.id===id);if(!m||m.reply||m.due>s.yearIndex*48+s.week||!Object.hasOwn(replies,mode))throw Error('この連絡にはもう返事をした。');[m.reply,m.answer]=messageVariant(id,mode);
+function continuationBody(trip){const place=typeof trip.place==='string'&&trip.place?trip.place:'この前の場所',endings={'ボードゲームカフェ':'あの遊び、帰ってからもう一度考えた。','水族館':'あの水槽を思い出して、写真を見返した。','食べ歩き':'あの日のおいしかったもの、また思い出してた。','スポーツ':'あの日の体の動かし方、少し思い出してた。','美術館':'あの展示のことを、もう少し考えてた。'},ending=Object.hasOwn(endings,trip.category)?endings[trip.category]:'あの日のことを、ふと思い出した。';return '「'+place+'」のあと、'+ending;}
+export function answerMessage(state,id,mode){if(state.pending||state.phase!=='study'||justiceBlocked(state))throw Error('今の出来事を先に確認しよう。');const s=structuredClone(state),social=ensureSocial(s),matches=social.messages.filter(x=>x.id===id),m=matches[0];if(matches.length!==1||!m||m.reply||!Number.isSafeInteger(m.due)||m.due>s.yearIndex*48+s.week||!Object.hasOwn(replies,mode))throw Error('この連絡にはもう返事をした。');[m.reply,m.answer]=messageVariant(id,mode);
  // Only a recorded attendee may gain a relationship effect; legacy messages without evidence still work.
- if(FRIENDS.some(p=>p.id===m.person)&&social.trips.some(t=>typeof t.key==='string'&&m.id===t.key+':'+m.person&&Array.isArray(t.people)&&t.people.includes(m.person)))social.bonds[m.person]=cap((social.bonds[m.person]??20)+(mode==='continue'?2:1));
+ const person=FRIENDS.find(p=>p.id===m.person),trip=person&&social.trips.find(t=>typeof t.key==='string'&&m.id===t.key+':'+m.person&&Array.isArray(t.people)&&t.people.includes(m.person));
+ if(trip){social.bonds[m.person]=cap((social.bonds[m.person]??20)+(mode==='continue'?2:1));const nextId=m.id+':after',due=s.yearIndex*48+s.week+(mode==='continue'?3:5);if(Number.isSafeInteger(due)&&!social.messages.some(x=>x.id===nextId)){social.messages.push({id:nextId,person:m.person,name:person.name,due,place:trip.place,body:continuationBody(trip),reply:null});while(social.messages.length>50){const answered=social.messages.findIndex(x=>x.reply);if(answered<0)break;social.messages.splice(answered,1);}}}
  s.lifestyle.spirit=cap(s.lifestyle.spirit+1);return s;}
 // Generic invented exchanges are rotated between participants; they do not describe real personalities.
 const live={

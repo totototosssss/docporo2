@@ -1,6 +1,6 @@
 // Optional, once-only moments earned through the existing hobby progress.
 // The player must still spend the required time in the actual weekly plan.
-import {hobbyRestriction} from './world.js?v=8.4';
+import {hobbyRestriction} from './world.js?v=8.5';
 export const HOBBY_MILESTONES = {
  photo:[['今日の一枚','同じ道で撮った写真を並べ、いつも通り過ぎる角の一枚を選んだ。'],['小さな写真集','季節ごとの写真を並べると、同じ場所の光が少しずつ違っていた。']],
  music:[['二小節の録音','つまずいていた二小節を録音し、音の間が揃ったところだけ残した。'],['一曲の記録','弾き直した箇所も含めて一曲を録った。速さより最後まで聴けることを選んだ。']],

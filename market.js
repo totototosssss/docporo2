@@ -1,4 +1,4 @@
-import {draw} from './exams.js?v=8.4';
+import {draw} from './exams.js?v=8.5';
 
 // Fictional parameters: not market data, an investment forecast, or a calibrated estimate.
 export const STOCKS=[

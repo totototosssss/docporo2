@@ -1,4 +1,4 @@
-import {shiftWage} from './journey.js?v=8.4';
+import {shiftWage} from './journey.js?v=8.5';
 // All courses, credit rules, wages and household budgets are fictional game rules.
 export const COURSES=[
  {id:'math',name:'微積分・線形代数',credits:3,slots:1,homework:.23,subjects:{math:1}},

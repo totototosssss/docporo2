@@ -1,4 +1,4 @@
-import {modelSchool} from './admissions.js?v=8.4';
+import {modelSchool} from './admissions.js?v=8.5';
 export const SUBJECTS = [
  {id:'math',name:'数学',short:'数',color:'#d29846'},
  {id:'english',name:'英語',short:'英',color:'#7197b8'},

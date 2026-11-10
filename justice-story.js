@@ -1,5 +1,5 @@
-import {draw} from './exams.js?v=8.4';
-import * as Custody from './custody.js?v=8.4';
+import {draw} from './exams.js?v=8.5';
+import * as Custody from './custody.js?v=8.5';
 
 // A deliberately abstract event: it contains no method, contact or real-world person.
 export const JUSTICE_OFFER={amount:50000,blocks:1,questioningBlocks:1,arrestBlocks:2,recoveryCost:5000,recoveryBlocks:1,

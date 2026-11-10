@@ -1,21 +1,21 @@
-import * as P from './planner.js?v=8.4';
-import * as S from './storage.js?v=8.4';
-import * as G from './goals.js?v=8.4';
-import * as A from './aspiration.js?v=8.4';
-import * as HM from './hobby-milestones.js?v=8.4';
-import * as Market from './market.js?v=8.4';
-import * as Romance from './romance.js?v=8.4';
-import * as HH from './household.js?v=8.4';
-import * as Housing from './housing.js?v=8.4';
-import * as Finance from './finance-system.js?v=8.4';
-import * as Justice from './justice-story.js?v=8.4';
-import * as Custody from './custody.js?v=8.4';
-import * as Living from './world.js?v=8.4';
-import * as Display from './text-display.js?v=8.4';
-import * as D from './data.js?v=8.4';
-import * as E from './engine.js?v=8.4';
-import {findShopItems} from './search.js?v=8.4';
-import {EXAM_STYLES,DOSSIERS,ROADMAP,RESEARCH_SOURCES,RANK_DATE} from './admissions.js?v=8.4';
+import * as P from './planner.js?v=8.5';
+import * as S from './storage.js?v=8.5';
+import * as G from './goals.js?v=8.5';
+import * as A from './aspiration.js?v=8.5';
+import * as HM from './hobby-milestones.js?v=8.5';
+import * as Market from './market.js?v=8.5';
+import * as Romance from './romance.js?v=8.5';
+import * as HH from './household.js?v=8.5';
+import * as Housing from './housing.js?v=8.5';
+import * as Finance from './finance-system.js?v=8.5';
+import * as Justice from './justice-story.js?v=8.5';
+import * as Custody from './custody.js?v=8.5';
+import * as Living from './world.js?v=8.5';
+import * as Display from './text-display.js?v=8.5';
+import * as D from './data.js?v=8.5';
+import * as E from './engine.js?v=8.5';
+import {findShopItems} from './search.js?v=8.5';
+import {EXAM_STYLES,DOSSIERS,ROADMAP,RESEARCH_SOURCES,RANK_DATE} from './admissions.js?v=8.5';
 const $=id=>document.getElementById(id),root=$('app'),KEY='poro-medical-year-v1';
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const displayText=x=>Display.hideRelationshipNumbers(Display.hideStressNumbers(x));
@@ -295,7 +295,7 @@ function hobbyMilestonePreview(id){
 function recreation(){const h=state.world.health,e=E.EXERCISES[h.exercise],x=E.HOBBIES[state.world.hobby];return `<section class="panel recreation-card"><h2>体を動かす日</h2><label>今週の運動${select('world-exercise',Object.entries(E.EXERCISES).map(([id,x])=>[id,x.name]),h.exercise)}</label><p>${e.hint}</p><p class="tiny">準備・移動・休憩を含め3時間 · 予算 ${yen(e.cost||0)}</p>${btn('この運動を予定する','add','data-id="exercise"','button primary full')}</section><section class="panel recreation-card"><h2>好きなことの時間</h2>${Living.livingRestrictions(state).hobbyReason?`<p class="notice">${esc(Living.livingRestrictions(state).hobbyReason)} 予定に入っている場合は、時間を調整してください。</p>`:''}<label>今週の楽しみ${select('world-hobby',Object.entries(E.HOBBIES).filter(([id])=>id===state.world.hobby||!Living.hobbyRestriction(state,id)).map(([id,x])=>[id,x.name+(Living.hobbyRestriction(state,id)?'（一時停止中）':'')]),state.world.hobby)}</label>${Living.livingRestrictions(state).hobbyReason?'<p class="tiny">今週は実行せず、費用もかかりません。</p>':`<p>${esc(x.line)}</p><p class="tiny">3時間 · 予算 ${yen(x.cost||0)}${x.fatigue>=2?' · 集中して遊ぶ分、疲れも残る。':' · ゆっくり過ごす時間。'}</p>`}${btn('この時間を予定する','add',`data-id="hobby" ${Living.livingRestrictions(state).hobbyReason?'disabled':''}`,'button subtle full')}</section><section class="panel"><details><summary>食事・健診・勉強する場所</summary><p>${E.healthStatus(state)}</p>${Living.livingRestrictions(state).dietSuspended?'<p class="notice">自炊は設備を確認できるまで一時停止しています。</p>':''}${Living.livingRestrictions(state).placeChanged?'<p class="notice">勉強する場所は当面、図書館を使います。</p>':''}<label>食事${select('world-diet',[['regular','いつもの食事'],...(state.housing?.status==='shelter'&&h.diet!=='cook'?[]:[['cook',state.housing?.status==='shelter'?'自炊と作り置き（一時停止中）':'自炊と作り置き']]),['convenience','コンビニと夜食']],h.diet)}</label><label>勉強する場所${select('world-place',[['library','学外の図書館'],...(state.housing?.status==='shelter'&&state.world.secret.place!=='home'?[]:[['home',state.housing?.status==='shelter'?'自宅（設定を保留）':'自宅']]),...(state.university.status!=='enrolled'&&state.world.secret.place!=='campus'?[]:[['campus',state.university.status!=='enrolled'?'大学の空き教室（設定を保留）':'大学の空き教室']])],state.world.secret.place)}</label><p>${state.world.secret.known?'大学の友人にも受験の準備を話している。':state.world.secret.confidant?'一人の友人だけに話している。':'この準備は、まだ大学の友人には内緒。'}</p><div class="button-row">${btn('健診・定期受診を予定','add','data-id="checkup"','button subtle')}${btn('自分だけの体調ノート','health-diary','','text-button')}</div></details></section>`;}
 function conversationLines(lines){return `<div class="conversation">${(lines||[]).map(l=>`<p><b>${esc(Array.isArray(l)?l[0]:l.name)}</b><span>${esc(displayText(Array.isArray(l)?l[1]:l.text))}</span></p>`).join('')}</div>`;}
 function readySocialMessages(){return (Array.isArray(state.social?.messages)?state.social.messages:[]).filter(m=>m&&!m.reply&&Number.isFinite(m.due)&&m.due<=state.yearIndex*48+state.week);}
-function socialLetter(){const messages=Array.isArray(state.social?.messages)?state.social.messages:[],ready=readySocialMessages(),letter=ready[0],answered=messages.filter(m=>m?.reply).at(-1),blocked=state.phase!=='study'||state.pending;return letter?`<section class="panel letter"><div class="section-top"><h2>${esc(letter.name)}からの連絡</h2><span>${ready.length}件</span></div><p>${esc(letter.body)}</p>${blocked?'<p class="notice">今の出来事を確認してから返事できます。</p>':`<div class="story-choices">${btn('その続き、今度聞きたい','social-answer',`data-id="${esc(letter.id)}" data-mode="continue"`,'choice')}${btn('今は忙しいけど、また話そう','social-answer',`data-id="${esc(letter.id)}" data-mode="later"`,'choice')}</div>`}</section>`:answered?`<section class="panel letter"><h2>この前の返事</h2><p><b>${esc(answered.name)}</b> ${esc(answered.answer||'')}</p></section>`:'';}
+function socialLetter({showAnswered=true}={}){const messages=Array.isArray(state.social?.messages)?state.social.messages:[],ready=readySocialMessages(),letter=ready[0],answered=messages.filter(m=>m?.reply).at(-1),justiceWait=Justice.justiceBlocked(state),blocked=state.phase!=='study'||state.pending||justiceWait;return letter?`<section class="panel letter"><div class="section-top"><h2>${esc(letter.name)}からの連絡</h2><span>${ready.length}件</span></div><p>${esc(letter.body)}</p>${blocked?`<p class="notice">${justiceWait?'手続きの知らせ':'今の出来事'}を確認してから返事できます。</p>`:`<div class="story-choices">${btn('その続き、今度聞きたい','social-answer',`data-id="${esc(letter.id)}" data-mode="continue"`,'choice')}${btn('今は忙しいけど、また話そう','social-answer',`data-id="${esc(letter.id)}" data-mode="later"`,'choice')}</div>`}</section>`:answered&&showAnswered?`<section class="panel letter"><h2>この前の返事</h2><p><b>${esc(answered.name)}</b> ${esc(answered.answer||'')}</p></section>`:'';}
 function socialConnectionHint(id){
  const social=state.social||{},messages=Array.isArray(social.messages)?social.messages:[],trips=Array.isArray(social.trips)?social.trips:[],now=state.yearIndex*48+state.week;
  const unread=messages.some(m=>m?.person===id&&!m.reply&&Number.isFinite(m.due)&&m.due<=now);
@@ -312,7 +312,12 @@ function socialConnectionHint(id){
  return null;
 }
 function socialConnections(){const items=E.GUESTS.map(g=>({g,hint:socialConnectionHint(g.id)})).filter(x=>x.hint).sort((a,b)=>Number(b.hint.unread)-Number(a.hint.unread)||b.hint.recent-a.hint.recent).slice(0,4);if(!items.length)return '';return `<section class="panel"><h2>最近のつながり</h2>${items.map(({g,hint})=>`<p><strong>${esc(g.name)}</strong> · ${esc(hint.text)}</p>`).join('')}${btn('メンバーを選ぶ','pane','data-group="life" data-id="company"','button subtle')}</section>`;}
-function socialChat(){const l=state.lifestyle,last=state.social?.lastLive,room=E.TALK_ROOMS[l.talk]||E.TALK_ROOMS.friends;return socialLetter()+socialConnections()+`<section class="panel"><div class="section-top"><h2>この前のライブトーク</h2>${last&&Number.isInteger(last.week)&&Number.isInteger(last.year)?`<span>${esc(E.calendar(last.week,last.year).label)}</span>`:''}</div>${last&&Array.isArray(last.lines)?conversationLines(last.lines):'<p>まだ会話はありません。話す部屋を選んで、今週の予定に入れよう。</p>'}</section><section class="panel talk-panel"><h2>オプチャのライブトーク</h2><p>今週の時間を使って、みんなと話す。</p><label>話す部屋${select('talk-room',Object.entries(E.TALK_ROOMS).map(([id,x])=>[id,x.name]),l.talk)}</label><p>${esc(room.description.replace(/面接 \+0\.5。/,''))}</p>${btn('ライブトークを予定する（3時間）','add','data-id="talk"','button primary full')}</section>`;}
+function socialMessageHistory(){
+ const now=state.yearIndex*48+state.week,messages=Array.isArray(state.social?.messages)?state.social.messages:[];
+ const history=messages.map((m,index)=>({m,index})).filter(({m})=>m&&typeof m.reply==='string'&&m.reply.trim()&&Number.isSafeInteger(m.due)&&m.due>=0&&m.due<=now).sort((a,b)=>a.m.due-b.m.due||a.index-b.index).slice(-5);
+ return `<section class="panel"><h2>これまでの連絡</h2><p>一緒に過ごした後の連絡と返事を、届いた順に読み返せます。</p>${history.length?history.map(({m})=>{const date=E.calendar(m.due%48,Math.floor(m.due/48)),name=typeof m.name==='string'&&m.name?m.name:E.GUESTS.find(g=>g.id===m.person)?.name||'友人';return `<article><p><strong>${esc(name)}</strong> · ${date.year}年 ${esc(date.label)}</p>${typeof m.body==='string'?`<p>${esc(displayText(m.body))}</p>`:''}<p>自分：${esc(displayText(m.reply))}</p>${typeof m.answer==='string'&&m.answer?`<p>${esc(name)}：${esc(displayText(m.answer))}</p>`:''}</article>`;}).join(''):'<p>返事を交わすと、ここに残ります。</p>'}</section>`;
+}
+function socialChat(){const l=state.lifestyle,last=state.social?.lastLive,room=E.TALK_ROOMS[l.talk]||E.TALK_ROOMS.friends;return socialLetter({showAnswered:false})+socialConnections()+socialMessageHistory()+`<section class="panel"><div class="section-top"><h2>この前のライブトーク</h2>${last&&Number.isInteger(last.week)&&Number.isInteger(last.year)?`<span>${esc(E.calendar(last.week,last.year).label)}</span>`:''}</div>${last&&Array.isArray(last.lines)?conversationLines(last.lines):'<p>まだ会話はありません。話す部屋を選んで、今週の予定に入れよう。</p>'}</section><section class="panel talk-panel"><h2>オプチャのライブトーク</h2><p>今週の時間を使って、みんなと話す。</p><label>話す部屋${select('talk-room',Object.entries(E.TALK_ROOMS).map(([id,x])=>[id,x.name]),l.talk)}</label><p>${esc(room.description.replace(/面接 \+0\.5。/,''))}</p>${btn('ライブトークを予定する（3時間）','add','data-id="talk"','button primary full')}</section>`;}
 function socialAlbum(){const social=state.social||{},trips=Array.isArray(social.trips)?social.trips:[],last=social.lastLive;return `${socialLetter()}${last&&Array.isArray(last.lines)?`<section class="panel"><details><summary>この前のライブトーク</summary>${conversationLines(last.lines)}</details></section>`:''}<div class="memory-grid">${trips.slice(-6).reverse().map(t=>`<article class="memory-card"><small>${E.calendar(t.week,t.year).label} · ${esc(t.pref)}</small><h3>${esc(t.title)}</h3><p>${esc(t.place)}</p><p>${(t.people||[]).map(id=>esc(E.GUESTS.find(g=>g.id===id)?.name||'友人')).join('・')}</p>${btn('会話を読み返す','trip-memory',`data-id="${esc(t.key)}"`,'text-button')}</article>`).join('')||'<div class="empty-state">みんなで出かけると、会話がここに残ります。</div>'}</div><details class="panel"><summary>これまでのお出かけ</summary>${(state.lifestyle.memories||[]).slice(-12).reverse().map(m=>`<p><b>${esc(m.title)}</b><br>${esc(displayText(m.text))}</p>`).join('')||'<p>まだ白紙のページ。</p>'}</details>`;}
 
 function records(){const all=recordsLegacy(),head=pageHead('THE YEAR SO FAR','積み重ねた日々。','選んだ言葉も、書き直した答案も。')+paneNav('records',[['journal','日々'],['scores','学力・収支'],['calendar','カレンダー']]);if(panes.records==='journal')return head+goalJournal()+hobbyJournal()+fragment(all,'<section class="journal-shelf">')+`<details class="panel"><summary>これまでの選択</summary>${(state.journey.narrative||[]).slice(-12).reverse().map(x=>`<h3>${esc(x.title)}</h3><p>${esc(x.choice)}</p><p>${esc(x.after)}</p>`).join('')||'<p>最初の一週間から書き始めよう。</p>'}</details>`;if(panes.records==='calendar')return head+fragment(all,'<section class="calendar-section">');return head+fragment(all,'<div class="study-overview">')+fragment(all,'<section class="panel skill-chart">')+fragment(all,'<div class="two-col">');}

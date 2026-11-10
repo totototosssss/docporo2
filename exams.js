@@ -1,5 +1,5 @@
 // Scores and distributions below are fictional gameplay calibration, never actual admissions predictions.
-import {utokyoDepth,utokyoMultiplier,utokyoOutcomePass} from './utokyo-depth.js?v=8.5';
+import {utokyoDepth,utokyoMultiplier,utokyoOutcomePass} from './utokyo-depth.js?v=8.6';
 const cap=(x,a=0,b=100)=>Math.max(a,Math.min(b,x));
 const sigmoid=x=>1/(1+Math.exp(-x));
 export function hashText(t){let h=2166136261;for(const c of t)h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0;}

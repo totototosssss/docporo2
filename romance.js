@@ -1,4 +1,4 @@
-import {draw} from './exams.js?v=8.5';
+import {draw} from './exams.js?v=8.6';
 
 // These adults and all conversations below are invented for this game.
 // They do not use the existing friends, chat exports, contacts, or a real app.

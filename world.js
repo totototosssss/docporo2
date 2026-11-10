@@ -1,9 +1,9 @@
-import {EXERCISES,HOBBIES} from './recreation.js?v=8.5';
-export {EXERCISES,HOBBIES} from './recreation.js?v=8.5';
-import {enrichEncounter,recordDecision} from './narrative.js?v=8.5';
-import {gear} from './lifestyle.js?v=8.5';
-import {SECRET_SCENES} from './secrets.js?v=8.5';
-import {draw} from './exams.js?v=8.5';
+import {EXERCISES,HOBBIES} from './recreation.js?v=8.6';
+export {EXERCISES,HOBBIES} from './recreation.js?v=8.6';
+import {enrichEncounter,recordDecision} from './narrative.js?v=8.6';
+import {gear} from './lifestyle.js?v=8.6';
+import {SECRET_SCENES} from './secrets.js?v=8.6';
+import {draw} from './exams.js?v=8.6';
 const cap=(x,a=0,b=100)=>Math.max(a,Math.min(b,x));
 export function newWorld(s){return {health:{height:168,weight:60,susceptibility:.6+draw(s.seed,'susceptibility')*.8,fitness:26,exposure:0,latent:false,diagnosed:false,care:false,lastCheck:-48,weeks:0,log:[],exercise:'walk',diet:'regular',privateDiary:false},secret:{suspicion:6,known:false,confidant:false,place:'library',lastIncident:-9,rumor:0},hobby:'photo',hobbyProgress:{},seen:[],journal:[],lastScene:null,chain:{},weeklyChoice:null};}
 export function hobbyRestriction(s,id=s.world?.hobby){if(s.housing?.status==='shelter'&&['cook','bath'].includes(id))return '設備を確認できるまで、この趣味はお休みです。';if(id==='club'&&s.university?.status!=='enrolled')return '大学サークルは在学中に選べます。';return '';}

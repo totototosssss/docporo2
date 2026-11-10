@@ -45,10 +45,42 @@ export function enrichStory(s,q){const p=WEEK_SCENES[q.week];if(!p)return q;cons
  if(q.week===9&&s.job==='short'){e.title='次の仕事を、どこまで続ける？';e.body='短期バイトの募集を見ながら、ロイコと来月の支出を確かめた。単発なら予定を変えやすい。塾講なら同じ生徒を継続して教える時間が必要になる。時給だけで比べると、その準備が表から消えてしまう。';e.lines=[['ロイコ','入れる日だけじゃなくて、帰ってから何ができるかも考えよう。']];e.choices[0]={...e.choices[0],label:'今の短期バイトを続ける',after:'今月の募集から、入れる日だけを選ぶことにした。固定の手当はないが、実験のある週を自分で避けられる。',echo:'次の募集が出た。前より先に大学の提出日を確認してから、勤務日を選んだ。'};e.choices[1]={...e.choices[1],label:'塾講の条件を確認する',hint:'この会話では契約を変えず、仕事ページで検討する。',after:'募集の時給の下に、授業準備と担当曜日のメモを足した。申し込みはまだ。仕事ページで、教えるために必要な力も確かめてから選ぶ。',echo:'塾講の条件を見直すと、準備の時間も自分の勉強に関わると分かった。働き方は、もう少し具体的に選べそうだ。'};}
  else if(q.week===9&&s.journey.work.contract==='regular')e.choices[1]={...e.choices[1],label:'単発勤務へ切り替える',hint:'固定手当を手放し、週ごとに勤務を決める。',after:'継続して受け持つ時間を変えたいと塾長へ伝えた。次の先生へ渡す教材をまとめる。自由になる夜と、減る手当を同じ紙に書いた。',echo:'固定だった曜日が空いた。何に使うか決めて初めて、勤務を変えた意味が出てきた。'};
  if(s.university.status==='leave'&&[1,7,13,25,27,37].includes(q.week)){e.body='休学中の今、大学から保管していた資料を整理している。友人から届いた連絡も残っていた。戻る日のために返すことと、今週の受験準備。どちらも一度に終えるのは難しそうだ。';e.lines=[['大学の友人','今すぐ返事が要るのは、こっちだけ。他は落ち着いてからでいいよ。']];e.choices=e.choices.map((x,i)=>({...x,after:['今週扱う資料だけ選び、必要な連絡を返した。残りには日付をつけて、受験のノートへ戻る。','友人と資料を確かめる時間を決めた。いま教室には通っていなくても、聞ける相手は残っている。','予定を詰めすぎず、整理する範囲を区切った。大学へ戻る可能性も、今の受験準備も、同じ手帳に残す。'][i],echo:'保管した資料を開くと、あの時確かめたことが書いてあった。離れている時間にも、道を残す作業はできた。'}));}
+ if(s.university.status==='graduated'){
+  const scenes={
+   1:['窓際で、また一題','卒業してからも、友人とは時々答案を見せ合う。来週も会うか、それぞれのペースで進めるかを決める。'],
+   7:['前に間違えた一題','保存していた答案を開くと、前に止まったところに付箋が残っていた。今日はどこまで戻ろう。'],
+   9:['次の仕事を、どこまで続ける？','来月の仕事と勉強の予定を並べる。働く日を増やす前に、準備に使える時間も確かめたい。'],
+   13:['試験範囲を分けて見る','復習する範囲を友人に話すと、全部を同じ週に詰めなくてもよさそうだと気づいた。'],
+   27:['二冊のノートを開く','これまでの学びと受験の答案。二冊のノートの間で、今週戻る場所を探す。'],
+   37:['本番までの確認','共通テストが近づいた。持ち物と、最後に見直す範囲を別の紙に書く。']
+  },scene=scenes[q.week];
+  if(scene){e.title=scene[0];e.body=scene[1];e.lines=[['友人','今週できるところから決めよう。']];
+   if(q.week===7){const labels=['途中式から解き直す','時間を決めて最後まで取り組む','分からない所を友人に相談する'],hints=['復習残り −5、体調 −3。','復習残り −7、体調 −14。','復習残り −3、ストレス −3。'];e.choices=e.choices.map((x,i)=>({...x,label:labels[i],hint:hints[i],effect:{...x.effect,debt:x.effect.campusDebt},after:'開いた答案に、今日の続きと次に戻る場所を書いた。',echo:'前の付箋の隣に、新しい書き込みが一行増えていた。'}));for(const x of e.choices)delete x.effect.campusDebt;}
+   else if(q.week===27){const labels=['復習の順番を決める','友人と解き直す場所を確かめる','一人で答案を仕上げる'],hints=['復習残り −6、習慣 +2。','復習残り −4、ストレス −5。','記述 +3、ストレス +6。'];e.choices=e.choices.map((x,i)=>({...x,label:labels[i],hint:hints[i],effect:{...x.effect,...(x.effect.campusDebt?{debt:x.effect.campusDebt}:{})},after:'ノートを閉じる前に、次に開くページを決めた。',echo:'決めたページに戻ると、途中までの考えが残っていた。'}));for(const x of e.choices)delete x.effect.campusDebt;}
+   else e.choices=e.choices.map(x=>({...x,hint:q.week===13&&x===e.choices[0]?'今週の予定を確認する。':q.week===37&&x===e.choices[0]?'試験の準備を確認する。':x.hint,after:'今週の予定を確かめて、次にできることを一つ決めた。',echo:'あの時に決めたことを、もう一度手帳で確かめた。'}));
+  }
+ }
+ if(q.week===23&&Array.isArray(s.household?.people)&&!s.household.people.some(p=>p.alive)){
+  e.body='写真のアップロードが終わった。画面には名前、住所、選んだ科目が並んでいる。送信する前に、書類と画面を照らし合わせる。';
+  e.lines=[['自分','一つずつ、確認しよう。']];
+  const versions=[['書類と画面を順に照合する','登録完了・習慣 +2。','書類と画面を一行ずつ見比べ、控えを保存した。','保存した控えを開き、確認した項目をもう一度見た。'],['項目を声に出して照合する','登録完了・ストレス −4。','科目名と住所を声に出しながら確認し、控えを保存した。','控えを見直すと、声に出して確かめた項目が並んでいた。']];
+  e.choices=e.choices.map((x,i)=>({...x,label:versions[i][0],hint:versions[i][1],after:versions[i][2],echo:versions[i][3]}));
+ }
+ if(q.week!==23&&Array.isArray(s.household?.people)&&!s.household.people.some(p=>p.alive)){
+  if(q.week===31){
+   e.title='交通費の行だけ、桁が違う';e.body='出願費に交通費を足すと、合計が変わった。試験の日程と手持ちの資金を並べて、使い道を考える。';e.lines=[['自分','移動の分も先に書いておこう。']];
+   const versions=[['受験と移動の費用を確保する','受験支援枠 +80,000円','必要な費用を受験用の枠に分けた。','日程を見ながら、移動の費用も書き足した。'],['教材費を確保する','手持ち +20,000円・記述 +3','今使う教材費を手持ちに分けた。','教材費の欄を見直し、必要なものから選んだ。'],['今の不安を整理する','ストレス −15・体調 +5','今すぐ決めることと、後で考えることを分けた。','残しておいたメモに、次に確認する項目を一つ足した。']];
+   e.choices=e.choices.map((x,i)=>({...x,label:versions[i][0],hint:versions[i][1],after:versions[i][2],echo:versions[i][3]}));
+  }else{
+   e.lines=e.lines.filter(([speaker])=>speaker!=='家族');
+   e.choices=e.choices.filter(x=>!`${x.label}${x.hint}${x.after}${x.echo}`.includes('家族')&&!x.effect?.family&&!x.commitment?.effect?.family);
+  }
+ }
+ if(q.week===35&&s.housing?.status==='shelter'&&e.choices[2])e.choices[2]={...e.choices[2],after:'スマホをしまい、いつもの道を歩いた。返事を考えるのもやめて、落ち着ける場所で本を開く。'};
  if(q.week===40&&s.ct?.missed)e.body='共通テストは受験できなかった。変えられない日程と、まだ受ける個別試験があるかを分けて確認する。なんくは空白の答案を一枚出した。今日から何に時間を使うかは、ここで改めて決めることになる。';
  return e;}
-export function enrichEncounter(s,e){if(!e)return e;const p=DAILY_SCENES[e.id];if(p){const r={...e,title:p.title,body:p.body,lines:p.lines,choices:e.choices.map((x,i)=>({...x,after:p.choices[i],echo:'「'+p.title+'」のことを思い出した。'+p.choices[i]}))};if(e.id==='nightcall'){r.choices[2].effect={friend:3,commitment:'散歩で話の続き'};r.choices[2].hint='来週3時間。話の続きを直接聞く。';}if(e.id==='borrow'){r.choices[2].effect={friend:3,stress:-2,health:-1};r.choices[2].hint='交流に時間を使う。話が長くなると少し疲れる。';}if(e.id==='printer')r.choices[0].effect={writing:.7,health:-1};if(e.id==='rain')r.choices[0].effect={fitness:1,stress:-3,health:-1};if(e.id==='message'){r.choices[0].effect={friend:4,stress:1};r.choices[1].effect={spirit:3,commitment:'近況を話す約束'};r.choices[1].hint='来週3時間。会ってから話す。';}return r;}
+export function enrichEncounter(s,e){if(!e)return e;const p=DAILY_SCENES[e.id];if(p){const r={...e,title:p.title,body:p.body,lines:p.lines,choices:e.choices.map((x,i)=>({...x,after:p.choices[i],echo:'「'+p.title+'」のことを思い出した。'+p.choices[i]}))};if(e.id==='nightcall'){r.choices[2].effect={friend:3,commitment:'散歩で話の続き'};r.choices[2].hint='来週3時間。話の続きを直接聞く。';}if(e.id==='borrow'){r.choices[2].effect={friend:3,stress:-2,health:-1};r.choices[2].hint='交流に時間を使う。話が長くなると少し疲れる。';}if(e.id==='printer')r.choices[0].effect={writing:.7,health:-1};if(e.id==='rain')r.choices[0].effect={fitness:1,stress:-3,health:-1};if(e.id==='message'){r.choices[0].effect={friend:4,stress:1};r.choices[1].effect={spirit:3,commitment:'近況を話す約束'};r.choices[1].hint='来週3時間。会ってから話す。';}if(e.id==='lunch'&&s.housing?.status==='shelter')r.choices[2]={...r.choices[2],label:'食べられるものを探す',hint:'今ある選択肢から昼食を考える。',after:'昼の誘いは断り、食べられるものを探した。',echo:'昼食の候補を一つ覚えておいた。'};return r;}
  if(e.id.startsWith('secret'))return {...e,body:'鞄から赤い本が滑り落ちた。大学の友人は大学名より先に、慌てて拾うこちらの顔を見ていた。まだ受験のことは話していない。友人はページを開かずに差し出して、返事を待っている。',lines:[['大学の友人','これ、何か準備してる？ 話したくなければ、無理には聞かないけど。']],choices:e.choices.map((x,i)=>({...x,after:['科目の問題を調べている、と返した。嘘だけではないが、友人の視線から先に目をそらした。次に予定を聞かれたら、また考えなければならない。','他の人にはまだ言わないでほしいと頼んだ。友人は本を戻し、「予定の聞き方も気をつける」と言う。全部を隠す相手が、一人減った。','受験の準備をしていると話した。驚かれたが、すぐに合否の予想はされなかった。「実験の約束は、今まで通り相談してね」と言われた。'][i],echo:['同じ友人から予定を聞かれ、返事を少し考えた。あの日ぼかした言葉が、まだ会話の間に残っている。','その友人は人前で受験の話を出さなかった。二人の時だけ、短く進み具合を聞いてくれた。','友人に隠さなくなっても、大学の提出日は変わらない。準備の話と班の約束を、一緒に相談するようになった。'][i]}))};return e;}
 export function recordDecision(s,e,c,index,next=null){const j=s.journey;j.narrative=j.narrative||[];j.echoes=j.echoes||[];j.narrative.push({id:e.id||'week-'+e.week,week:s.week-1,year:s.yearIndex,title:e.title,choice:c.label,after:c.after||'選んだことを、次の一週間へ持っていく。'});j.narrative=j.narrative.slice(-100);if(c.echo)j.echoes.push({id:(e.id||e.week)+':'+s.yearIndex+':'+s.week,due:s.yearIndex*48+s.week+2+(index===2?1:0),title:e.title+'・その後',body:c.echo,image:e.image,done:false});j.echoes=j.echoes.slice(-60);s.pending={kind:'afterStory',title:'選んだ言葉の、あと',body:c.after||'次の一週間へ。',choice:c.label,image:e.image,next};s.world.journal.push({title:e.title,text:c.after||c.label,image:e.image,week:s.week-1,year:s.yearIndex});s.world.journal=s.world.journal.slice(-180);}
-export function queueEcho(s){const e=s.journey.echoes?.find(e=>!e.done&&e.due<=s.yearIndex*48+s.week);if(e){e.done=true;s.pending={kind:'afterStory',title:e.title,body:e.body,image:e.image,next:s.pending};s.world.journal.push({title:e.title,text:e.body,image:e.image,week:s.week-1,year:s.yearIndex});}}
+export function queueEcho(s){const e=s.journey.echoes?.find(e=>!e.done&&e.due<=s.yearIndex*48+s.week);if(e){const body=s.housing?.status==='shelter'?String(e.body).replace('翌日も食卓はいつもどおりだった。','翌日、手帳を開いた。').replace('家の買い置きを思い出して帰った。昼の誘いは断ったが、温かいものを自分で用意できた。','昼の誘いは断り、食べられるものを探した。'):e.body;e.done=true;s.pending={kind:'afterStory',title:e.title,body,image:e.image,next:s.pending};s.world.journal.push({title:e.title,text:body,image:e.image,week:s.week-1,year:s.yearIndex});}}
 export function dismissNarrative(state){if(state.pending?.kind!=='afterStory')throw Error('先に今の出来事を読もう。');const s=structuredClone(state);s.pending=s.pending.next||null;return s;}

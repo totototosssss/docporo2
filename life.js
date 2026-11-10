@@ -1,4 +1,4 @@
-import {shiftWage} from './journey.js?v=7.2';
+import {shiftWage} from './journey.js?v=8.0';
 // All courses, credit rules, wages and household budgets are fictional game rules.
 export const COURSES=[
  {id:'math',name:'微積分・線形代数',credits:3,slots:1,homework:.23,subjects:{math:1}},
@@ -17,13 +17,13 @@ export const termIndex=w=>w<16?0:w>=24&&w<40?1:null;
 const key=(s,t,id)=>`${s.university.grade}:${t}:${id}`;
 export function newUniversity(){return {grade:1,status:'enrolled',examPolicy:'sit',policy:'all',focus:'balanced',earned:{},legacyCredits:0,terms:[],current:null,lastPromotion:null};}
 export function ensureTerm(s){
- const ti=termIndex(s.week);if(ti===null||s.university.status==='leave')return;
+ const ti=termIndex(s.week);if(ti===null||s.university.status!=='enrolled')return;
  if(s.university.current?.year===s.yearIndex&&s.university.current?.term===ti)return;
  s.university.current={year:s.yearIndex,term:ti,grade:s.university.grade,weeks:0,closed:false,enrolled:COURSES.filter(c=>!s.university.earned[key(s,ti,c.id)]).map(c=>c.id),stats:Object.fromEntries(COURSES.map(c=>[c.id,{attendance:0,homework:0}]))};
  s.campusDebt=0;
 }
 export function cloneUniversity(u){return {...u,earned:{...u.earned},terms:[...u.terms],current:u.current?{...u.current,enrolled:[...u.current.enrolled],stats:Object.fromEntries(Object.entries(u.current.stats).map(([id,v])=>[id,{...v}]))}:null};}
-export function activeCourses(s){if(termIndex(s.week)===null||s.university.status==='leave'||s.university.current?.closed)return [];return COURSES.filter(c=>s.university.current?.enrolled.includes(c.id));}
+export function activeCourses(s){if(termIndex(s.week)===null||s.university.status!=='enrolled'||s.university.current?.closed)return [];return COURSES.filter(c=>s.university.current?.enrolled.includes(c.id));}
 export function attends(s,c){return s.university.policy==='all'||s.university.policy==='core'&&['math','lab'].includes(c.id);}
 export function lectureSlots(s){return activeCourses(s).filter(c=>attends(s,c)).reduce((n,c)=>n+c.slots,0);}
 export function universityCredits(s){return s.university.legacyCredits+Object.values(s.university.earned).reduce((n,v)=>n+v,0);}
@@ -38,7 +38,7 @@ export function courseStatus(s,c){
  return {id:c.id,attendance,assignments,grade,examScore,sat,passed,credits:c.credits,reason:!sat?'試験欠席':examScore<50?'試験の得点不足':attendance<(c.lab?.75:.65)?'出席不足':assignments<(c.lab?.7:.4)?'課題不足':grade<60?'成績不足':'取得圏内'};
 }
 export function universityStep(s,blocks,eff){
- ensureTerm(s);const cs=activeCourses(s),gains={};if(termIndex(s.week)===null||s.university.status==='leave'){s.campusDebt=0;return {gains,notes:[]};}
+ ensureTerm(s);const cs=activeCourses(s),gains={};if(termIndex(s.week)===null||s.university.status!=='enrolled'){s.campusDebt=0;return {gains,notes:[]};}
  const t=s.university.current,total=cs.reduce((n,c)=>n+c.homework,0),focus=cs.find(c=>c.id===s.university.focus);
  for(const c of cs){const st=t.stats[c.id],present=attends(s,c);st.attendance+=present?1:0;
   const share=cs.length===1?1:focus?(c.id===focus.id?.6:.4*c.homework/Math.max(.01,total-focus.homework)):c.homework/total;
@@ -57,12 +57,26 @@ export function universityStep(s,blocks,eff){
  return {gains,notes};
 }
 export function promotion(s){
- const u=s.university,earned=Object.entries(u.earned).filter(([k])=>k.startsWith(u.grade+':')).reduce((n,[,v])=>n+v,0)+(u.grade===1?u.legacyCredits:0);
+ const u=s.university;if(u.status==='graduated')return {earned:0,labs:false,ok:false,label:'卒業済み',nextGrade:u.grade};
+ const earned=Object.entries(u.earned).filter(([k])=>k.startsWith(u.grade+':')).reduce((n,[,v])=>n+v,0)+(u.grade===1?u.legacyCredits:0);
  const labs=(u.grade===1&&u.legacyCredits>=24)||Boolean(u.earned[`${u.grade}:0:lab`]&&u.earned[`${u.grade}:1:lab`]);
  const ok=earned>=24&&labs;
  return {earned,labs,ok,label:u.status==='leave'?'休学中':ok?'進級条件を達成':'留年・再履修',nextGrade:u.grade+(ok?1:0)};
 }
+// The game records yearly progress rather than a real university's degree requirements.
+function hasYearEvidence(s,grade){
+ const u=s.university,earned=Object.entries(u.earned||{}).filter(([k])=>k.startsWith(grade+':')).reduce((n,[,v])=>n+v,0)+(grade===1?u.legacyCredits||0:0);
+ const labs=(grade===1&&(u.legacyCredits||0)>=24)||Boolean(u.earned?.[`${grade}:0:lab`]&&u.earned?.[`${grade}:1:lab`]);
+ return earned>=24&&labs||(s.pastYears||[]).some(y=>y.promotion?.ok&&y.promotion.nextGrade===grade+1);
+}
+export function graduationEligibility(s){
+ if(s.university.status==='graduated')return 'graduated';
+ if(s.phase!=='ending'||s.university.status!=='enrolled'||s.university.grade<4||!promotion(s).ok)return 'ineligible';
+ return [1,2,3].every(grade=>hasYearEvidence(s,grade))?'ready':'missing-history';
+}
+export function canGraduate(s){return graduationEligibility(s)==='ready';}
 export function changeUniversity(state,{policy,focus,enrolled,examPolicy}={}){
+ if(state.university.status==='graduated')throw new Error('理学部は卒業しています。');
  if(state.phase!=='study'||state.pending)throw new Error('出来事を確認してから大学の予定を変更してください。');
  const s=JSON.parse(JSON.stringify(state));ensureTerm(s);
  if(examPolicy){if(!['sit','skip'].includes(examPolicy))throw new Error('試験の方針が不正です。');s.university.examPolicy=examPolicy;}

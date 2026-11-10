@@ -1,4 +1,5 @@
 // Scores and distributions below are fictional gameplay calibration, never actual admissions predictions.
+import {utokyoDepth,utokyoMultiplier,utokyoOutcomePass} from './utokyo-depth.js?v=8.0';
 const cap=(x,a=0,b=100)=>Math.max(a,Math.min(b,x));
 const sigmoid=x=>1/(1+Math.exp(-x));
 export function hashText(t){let h=2166136261;for(const c of t)h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0;}
@@ -27,8 +28,10 @@ export function examForecast(s,school,weights,tactic='steady'){
  const cut=81.5+(school.difficulty-90)*1.50,prep=paperReadiness(s,school),scale=1.6+Math.max(0,70-prep)*.012-(s.lifestyle.inventory.watch?.12:0);
  const tacticBonus=tactic==='check'?.35:tactic==='attack'?(s.writing-85)*.018:0;
  const interview=.12+.88*sigmoid((s.interview-40)/10),raw=sigmoid((mean+tacticBonus-cut)/scale)*interview;
- return {mean,secondary,ct,scores,cut,scale,probability:raw,interview,prep,tacticBonus,low:mean-scale*2.2,high:mean+scale*2.2};
+ return {mean,secondary,ct,scores,cut,scale,probability:raw*utokyoMultiplier(s,school.id),interview,prep,tacticBonus,low:mean-scale*2.2,high:mean+scale*2.2};
 }
 export const CHANCE_BANDS=[[0,.05,'0–5%','かなり厳しい'],[.05,.15,'5–15%','厳しい'],[.15,.30,'15–30%','挑戦圏'],[.30,.50,'30–50%','届くかどうか'],[.50,.70,'50–70%','十分に勝負できる'],[.70,.85,'70–85%','合格圏が見える'],[.85,.95,'85–95%','有力'],[.95,1.01,'95%以上','非常に有力']];
 export function chanceBand(p){return CHANCE_BANDS.find(([a,b])=>p>=a&&p<b)||CHANCE_BANDS[0];}
-export function sitSecondary(s,school,weights,tactic){const f=examForecast(s,school,weights,tactic),shared=logistic(s.seed,'exam:'+school.id)*f.scale,score=f.mean+f.tacticBonus+shared,interviewOK=draw(s.seed,'interview:'+school.id)<f.interview;return {...f,score,passed:score>=f.cut&&interviewOK,interviewOK,subjectScores:Object.fromEntries(Object.entries(f.scores).map(([id,x])=>[id,Math.round(cap(x+shared+logistic(s.seed,school.id+':'+id)*.4))]))};}
+// These prompts describe game actions, not numeric thresholds or real admissions criteria.
+export function utokyoAdvice(s){const q=utokyoDepth(s),advice=[];if(q.breadth<.7)advice.push('国語を含む各科目の単元を見直す');if(q.depth<.7)advice.push('理三の答案を書き、失点を分析する');if(q.reproduction<.7)advice.push('日を置いて、答案を白紙から再現する');if(!q.recentAttempt)advice.push('初見の答案に、時間を決めて取り組む');return advice;}
+export function sitSecondary(s,school,weights,tactic){const f=examForecast(s,school,weights,tactic),shared=logistic(s.seed,'exam:'+school.id)*f.scale,score=f.mean+f.tacticBonus+shared,interviewOK=draw(s.seed,'interview:'+school.id)<f.interview,ordinaryPass=score>=f.cut&&interviewOK,depthOK=school.id==='utokyo'?utokyoOutcomePass(s,school.id,true,draw(s.seed,'utokyo-depth')):true,passed=ordinaryPass&&depthOK;return {...f,score,passed,interviewOK,...(school.id==='utokyo'?{depthOK}:{}),subjectScores:Object.fromEntries(Object.entries(f.scores).map(([id,x])=>[id,Math.round(cap(x+shared+logistic(s.seed,school.id+':'+id)*.4))]))};}

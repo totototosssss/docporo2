@@ -1,8 +1,8 @@
-import {VENUES as BASE_VENUES,EXHIBITIONS} from './venue-data.js?v=7.2';
-import {CAFES} from './cafes.js?v=7.2';
+import {VENUES as BASE_VENUES,EXHIBITIONS} from './venue-data.js?v=8.0';
+import {CAFES} from './cafes.js?v=8.0';
 export const VENUES=[...BASE_VENUES,...CAFES];
-import {draw} from './exams.js?v=7.2';
-export {EXHIBITIONS} from './venue-data.js?v=7.2';
+import {draw} from './exams.js?v=8.0';
+export {EXHIBITIONS} from './venue-data.js?v=8.0';
 export const VENUE_MAP=Object.fromEntries(VENUES.map(v=>[v.id,v]));
 export const VENUE_CATEGORIES=['すべて','水族館','動物園','美術館','博物館','庭園','ボードゲームカフェ'];
 const lines={

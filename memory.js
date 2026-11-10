@@ -1,5 +1,6 @@
-import {unitBookEffect} from './books.js?v=7.2';
-import {subjectTopics,subjectUnits,SOCIAL_TRACKS} from './curriculum.js?v=7.2';
+import {unitBookEffect} from './books.js?v=8.0';
+import {subjectTopics,subjectUnits,SOCIAL_TRACKS} from './curriculum.js?v=8.0';
+import {agingView} from './aging.js?v=8.0';
 // Fictional learning model. Knowledge has no 100-point ceiling.
 export const SUBJECT_IDS=['math','english','physics','chemistry','japanese','social','info'];
 const copy=x=>structuredClone(x), cap=(x,a,b)=>Math.max(a,Math.min(b,x));
@@ -11,11 +12,11 @@ export function setReview(state,mode,subject){if(!['due','weak','subject'].inclu
 export function learnAmount(x,method='foundation'){const base=1.10/(1+Math.max(0,x-65)/82);const match=method==='foundation'?1/(1+Math.exp((x-77)/10)):method==='practice'?Math.exp(-(((x-88)/46)**2)):1/(1+Math.exp(-(x-79)/10));return base*(.18+1.12*match);}
 export function syncMemory(s){for(const id of SUBJECT_IDS){s.journey.topics[id]=s.memory.cells[id].map(c=>c.accessible);s.skills[id]=s.journey.topics[id].reduce((n,x)=>n+x,0)/s.journey.topics[id].length;}}
 export function memoryStep(s,before,counts,plan,eff,external={}){
- const w=absoluteWeek(s),m=s.memory,reviewed=[];
+ const w=absoluteWeek(s),m=s.memory,reviewed=[],forgettingFactor=agingView(s).forgettingFactor;
  for(const id of SUBJECT_IDS){const focus=s.journey.focus[id],n=counts[id]||0,days=plan.schedule?new Set(Object.entries(plan.schedule).filter(([,a])=>a===id).map(([k])=>Math.floor(+k/3))).size:Math.min(3,n),factor=days>1?1.07:1;
   m.cells[id].forEach((cell,i)=>{const units=subjectUnits(s,id),group=units[Number(focus)]?.group,members=units.filter(u=>u.group===group).length;const raw=j=>j===Number(focus)?4:units[j]?.group===group?1.7:.65,totalWeight=units.reduce((sum,_,j)=>sum+raw(j),0);const weight=focus==='balanced'?1:raw(i)*m.cells[id].length/totalWeight;const bookEffect=unitBookEffect(s,plan.books?.[id],i,plan.methods[id]);const gain=learnAmount(cell.knowledge,plan.methods[id])*n*weight*eff*factor*(1+(plan.boost?.[id]||0)+bookEffect.boost)*(1-Math.max(0,n-2)*.12);const ext=Math.max(0,external[id]||0);
    if(n||ext){const age=w-cell.last;cell.knowledge+=gain+ext;cell.accessible+=(cell.knowledge-cell.accessible)*Math.min(.94,.42+n*.22)+gain*.1;cell.accessible=Math.min(cell.knowledge,cell.accessible);if(age>=1&&n){cell.stability=Math.min(110,cell.stability*(1+.07*Math.min(age,5)+bookEffect.stability)+.15);cell.retrievals++;}cell.last=w;}
-   else cell.accessible=Math.max(0,cell.accessible*Math.exp(-1/(Math.max(2,cell.stability)*8)));
+   else cell.accessible=Math.max(0,cell.accessible*Math.exp(-forgettingFactor/(Math.max(2,cell.stability)*8)));
    if(w-cell.last>14)cell.knowledge*=.999;
   });
  }
